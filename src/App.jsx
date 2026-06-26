@@ -19,6 +19,7 @@ const [siteStats, setSiteStats] = useState({
 
 const [tasks, setTasks] = useState([]);
 const [completedTasks, setCompletedTasks] = useState([]);
+const [proofFiles, setProofFiles] = useState({});
 const [taskHistory, setTaskHistory] = useState([]);
 const [showWithdraw, setShowWithdraw] = useState(false);
 const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -215,11 +216,18 @@ async function completeTask(task) {
     return;
   }
 
+  const file = proofFiles[task.id];
+
+  if (!file) {
+    alert("Прикрепите скриншот выполнения задания");
+    return;
+  }
+
   const { data: alreadyDone, error: checkError } = await supabase
-  .from("user_tasks")
-  .select("*")
-  .eq("user_id", user.id)
-  .eq("task_id", task.id);
+    .from("user_tasks")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("task_id", task.id);
 
   if (checkError) {
     alert(checkError.message);
@@ -227,30 +235,48 @@ async function completeTask(task) {
   }
 
   if (alreadyDone && alreadyDone.length > 0) {
-    alert("Вы уже выполнили это задание");
+    alert("Вы уже отправили это задание");
     return;
   }
+
+  const filePath = `${user.id}/${task.id}-${Date.now()}-${file.name}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("task-proofs")
+    .upload(filePath, file);
+
+  if (uploadError) {
+    alert(uploadError.message);
+    return;
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from("task-proofs")
+    .getPublicUrl(filePath);
 
   const { error } = await supabase
     .from("user_tasks")
     .insert({
-  user_id: user.id,
-  task_id: task.id,
-  completed: true,
-  rewarded: false,
-  status: "pending",
-});
+      user_id: user.id,
+      task_id: task.id,
+      completed: true,
+      rewarded: false,
+      status: "pending",
+      proof_url: publicUrlData.publicUrl,
+    });
 
   if (error) {
     alert(error.message);
     return;
   }
 
-  setCompletedTasks([
-  ...completedTasks,
-  task.id,
-]);
-loadTaskHistory(user.id);
+  setCompletedTasks([...completedTasks, task.id]);
+  setProofFiles({
+    ...proofFiles,
+    [task.id]: null,
+  });
+
+  loadTaskHistory(user.id);
 
   alert("Задание отправлено на проверку");
 }
@@ -1308,6 +1334,20 @@ setAdminTab("main");
         Награда: +{task.reward} ₽
       </div>
     </div>
+
+{!completedTasks.includes(task.id) && (
+  <input
+    className="authInput"
+    type="file"
+    accept="image/*"
+    onChange={(e) =>
+      setProofFiles({
+        ...proofFiles,
+        [task.id]: e.target.files[0],
+      })
+    }
+  />
+)}
 
    <button
   className="primaryBtn"
