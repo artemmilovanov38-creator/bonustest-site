@@ -972,51 +972,62 @@ if (user && isAdminPanel) {
         </div>
       )}
 
-      {adminTab === "taskReviews" && (
-  <div className="tasksSection">
-    <h2>Проверка заданий</h2>
+      <div className="reviewCard">
+  <div className="reviewHeader">
+    <div>
+      <h3>{item.task?.title || "Задание"}</h3>
+      <p>{item.dbUser?.email}</p>
+    </div>
 
-    {adminUserTasks.length === 0 ? (
-      <p>Заданий на проверку пока нет</p>
-    ) : (
-      adminUserTasks.map((item) => (
-        <div className="taskCard" key={item.id}>
-          <div className="taskInfo">
-            <h3>{item.task?.title || "Задание"}</h3>
-
-            <p>Пользователь: {item.dbUser?.email}</p>
-
-            <p>
-              Награда: {item.task?.reward || 0} ₽
-            </p>
-
-            <div className="taskReward">
-              Статус: {getStatusText(item.status || "pending")}
-            </div>
-
-            {item.status === "pending" && (
-              <div className="heroButtons">
-                <button
-                  className="primaryBtn"
-                  onClick={() => updateUserTaskStatus(item, "approved")}
-                >
-                  Одобрить
-                </button>
-
-                <button
-                  className="secondaryBtn"
-                  onClick={() => updateUserTaskStatus(item, "rejected")}
-                >
-                  Отклонить
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      ))
-    )}
+    <span className="statusBadge">
+      {getStatusText(item.status || "pending")}
+    </span>
   </div>
-)}
+
+  <div className="reviewMeta">
+    <span>💰 {item.task?.reward || 0} ₽</span>
+    <span>
+      🕒 {new Date(item.created_at).toLocaleString()}
+    </span>
+  </div>
+
+  {item.proof_url ? (
+    <div className="proofBox">
+      <img
+        src={item.proof_url}
+        alt="Скриншот выполнения"
+        onClick={() => window.open(item.proof_url, "_blank")}
+      />
+
+      <button
+        className="secondaryBtn"
+        onClick={() => window.open(item.proof_url, "_blank")}
+      >
+        Открыть скриншот
+      </button>
+    </div>
+  ) : (
+    <p className="noProof">Скриншот не прикреплён</p>
+  )}
+
+  {item.status === "pending" && (
+    <div className="reviewActions">
+      <button
+        className="primaryBtn"
+        onClick={() => updateUserTaskStatus(item, "approved")}
+      >
+        Одобрить
+      </button>
+
+      <button
+        className="secondaryBtn"
+        onClick={() => updateUserTaskStatus(item, "rejected")}
+      >
+        Отклонить
+      </button>
+    </div>
+  )}
+</div>
 
       {adminTab === "withdraws" && (
         <div className="tasksSection">

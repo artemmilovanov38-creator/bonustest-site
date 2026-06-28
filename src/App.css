@@ -858,6 +858,96 @@ overflow: hidden;
   font-weight: 700;
 }
 
+.reviewCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.reviewHeader h3 {
+  margin: 0 0 6px;
+}
+
+.reviewHeader p {
+  margin: 0;
+  opacity: 0.75;
+  word-break: break-word;
+}
+
+.statusBadge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.reviewMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  opacity: 0.85;
+}
+
+.reviewMeta span {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.proofBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.proofBox img {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  border-radius: 18px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.noProof {
+  opacity: 0.7;
+}
+
+.reviewActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .reviewHeader {
+    flex-direction: column;
+  }
+
+  .statusBadge {
+    width: fit-content;
+  }
+
+  .proofBox {
+    max-width: 100%;
+  }
+
+  .reviewActions button,
+  .proofBox button {
+    width: 100%;
+  }
+}
+
 
 
 @media (max-width: 650px) {
