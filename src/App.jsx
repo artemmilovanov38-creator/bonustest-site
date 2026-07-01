@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./lib/supabase";
 import "./App.css";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
 const [showAuth, setShowAuth] = useState(false);
@@ -1221,561 +1223,96 @@ if (user && isAdminPanel) {
 }
 if (user) {
   return (
-    <div className="dashboard">
-
-    
-
-
-      <div className="dashboardHeader">
-        <h1>Личный кабинет</h1>
-
-        {isAdmin && (
-  <button
-    className="secondaryBtn"
-    onClick={() => {
-      setIsAdminPanel(!isAdminPanel);
-      loadAdminWithdraws();
-      loadAdminTasks();
-      loadAdminUsers();
-      loadAdminUserTasks();
-setAdminTab("main");
-    }}
-  >
-    {isAdminPanel ? "Кабинет" : "Админка"}
-  </button>
-)}
-
-        <button
-          className="primaryBtn"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            setUser(null);
-          }}
-        >
-          Выйти
-        </button>
-      </div>
-
-      <div className="dashboardCard">
-        <h2>{user.email}</h2>
-
-        <p>Баланс: {balance} ₽</p>
-
-        <div className="heroButtons">
-          <button className="primaryBtn">
-            Заработать
-          </button>
-
-          <button
-  className="secondaryBtn"
-  onClick={() => setShowWithdraw(true)}
->
-  Вывести
-</button>
-<button
-  className="secondaryBtn"
-  onClick={() => {
-    loadTasks();
-    loadTaskHistory(user.id);
-    loadWithdrawHistory(user.id);
-    loadSiteStats();
-  }}
->
-  🔄 Обновить
-</button>
-        </div>
-      </div>
-      <div className="tasksSection">
-
-        <div className="tasksSection">
-  <h2>История заданий</h2>
-
-  {taskHistory.length === 0 ? (
-    <p>Вы ещё не выполняли задания</p>
-  ) : (
-    taskHistory.map((item) => (
-      <div className="taskCard" key={item.id}>
-        <div className="taskInfo">
-          <h3>{item.task?.title}</h3>
-          <p>
-            Статус: {getStatusText(item.status || "pending")}
-          </p>
-          <div className="taskReward">
-           {item.status === "approved"
-  ? `Начислено: +${item.task?.reward || 0} ₽`
-  : "Ожидает проверки"}
-          </div>
-        </div>
-      </div>
-    ))
-  )}
-</div>
-
-<div className="tasksSection">
-  <h2>История выводов</h2>
-
-  {withdrawHistory.length === 0 ? (
-    <p>Заявок на вывод пока нет</p>
-  ) : (
-    withdrawHistory.map((item) => (
-      <div className="taskCard" key={item.id}>
-        <div className="taskInfo">
-          <h3>Вывод: {item.amount} ₽</h3>
-          <p>Кошелёк: {item.wallet}</p>
-          <div className="taskReward">
-            Статус: {getStatusText(item.status)}
-          </div>
-        </div>
-      </div>
-    ))
-  )}
-</div>
-
-  <h2>Доступные задания</h2>
-
-  {tasks.map((task) => (
-  <div className="taskCard" key={task.id}>
-
-    <div className="taskInfo">
-      <h3>{task.title}</h3>
-
-      <p>{task.description}</p>
-
-      <div className="taskReward">
-        Награда: +{task.reward} ₽
-      </div>
-    </div>
-
-{!completedTasks.includes(task.id) && (
-  <input
-    className="authInput"
-    type="file"
-    accept="image/*"
-    onChange={(e) =>
-      setProofFiles({
-        ...proofFiles,
-        [task.id]: e.target.files[0],
-      })
-    }
-  />
-)}
-
-   <button
-  className="primaryBtn"
-  disabled={completedTasks.includes(task.id)}
-  onClick={() => completeTask(task)}
->
-  {completedTasks.includes(task.id)
-  ? "🟡 На проверке"
-  : "Выполнить"}
-</button>
-
-  </div>
-))}
-
-</div>
-
-{showWithdraw && (
-  <div className="modal">
-    <div className="authBox">
-      <button
-        className="close"
-        onClick={() => setShowWithdraw(false)}
-      >
-        ×
-      </button>
-
-      <h2>Вывод средств</h2>
-
-      <p>
-  Минимальная сумма вывода: {siteSettings.min_withdraw || 0} ₽
-</p>
-
-      <input
-        className="authInput"
-        placeholder="Сумма"
-        value={withdrawAmount}
-        onChange={(e) => setWithdrawAmount(e.target.value)}
-      />
-
-      <input
-        className="authInput"
-        placeholder="Telegram @username"
-        value={withdrawWallet}
-        onChange={(e) => setWithdrawWallet(e.target.value)}
-      />
-
-      <button
-        className="primaryBtn authSubmit"
-        onClick={createWithdrawRequest}
-      >
-        Отправить заявку
-      </button>
-    </div>
-  </div>
-)}
-
-    </div>
+    <Dashboard
+      user={user}
+      balance={balance}
+      tasks={tasks}
+      completedTasks={completedTasks}
+      proofFiles={proofFiles}
+      setProofFiles={setProofFiles}
+      completeTask={completeTask}
+      taskHistory={taskHistory}
+      withdrawHistory={withdrawHistory}
+      showWithdraw={showWithdraw}
+      setShowWithdraw={setShowWithdraw}
+      withdrawAmount={withdrawAmount}
+      setWithdrawAmount={setWithdrawAmount}
+      withdrawWallet={withdrawWallet}
+      setWithdrawWallet={setWithdrawWallet}
+      createWithdrawRequest={createWithdrawRequest}
+      siteSettings={siteSettings}
+      isAdmin={isAdmin}
+      setIsAdminPanel={setIsAdminPanel}
+      loadTasks={loadTasks}
+      loadTaskHistory={loadTaskHistory}
+      loadWithdrawHistory={loadWithdrawHistory}
+      loadSiteStats={loadSiteStats}
+      signOutUser={async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+      }}
+    />
   );
 }
 
-  return (
-    <div className="site">
-      <header className="header">
-       <div className="logo">
-  {siteSettings.site_name || "BONUSTEST"}
-</div>
-        <button className="loginBtn" onClick={() => setShowAuth(true)}>Войти</button>
-      </header>
+ return (
+  <>
+    <Home
+      siteSettings={siteSettings}
+      siteStats={siteStats}
+      setShowAuth={setShowAuth}
+    />
 
-      <section className="hero">
-        <div className="heroContent">
-          <div className="badge">Платформа простых заданий</div>
+    {showAuth && (
+      <div className="modal">
+        <div className="authBox">
+          <button className="close" onClick={() => setShowAuth(false)}>
+            ×
+          </button>
 
-          <h1>Зарабатывайте на простых действиях</h1>
+          <h2>{authMode === "signup" ? "Регистрация" : "Вход"}</h2>
 
-          <p>
-            Выполняйте лёгкие задания, получайте бонусы и открывайте больше
-            возможностей в единой экосистеме.
-          </p>
+          <input
+            className="authInput"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-          <div className="heroButtons">
-            <button className="primaryBtn" onClick={() => setShowAuth(true)}>
-              Начать бесплатно
-            </button>
-            <button className="secondaryBtn">Смотреть задания</button>
-          </div>
-          <div className="trust">
-  <span>✓ Быстрые выплаты</span>
-  <span>✓ Простые задания</span>
-  <span>✓ Единый аккаунт</span>
-</div>
+          <input
+            className="authInput"
+            type="password"
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-         <div className="stats">
-  <div className="stat">
-    <b>{siteStats.users}+</b>
-    <span>пользователей</span>
-  </div>
+          <button
+            className="primaryBtn authSubmit"
+            onClick={authMode === "signup" ? handleSignUp : handleSignIn}
+            disabled={loading}
+          >
+            {loading
+              ? "Загрузка..."
+              : authMode === "signup"
+                ? "Создать аккаунт"
+                : "Войти"}
+          </button>
 
-  <div className="stat">
-    <b>{siteStats.paid} ₽</b>
-    <span>выплачено</span>
-  </div>
-
-  <div className="stat">
-    <b>{siteStats.tasks}+</b>
-    <span>заданий</span>
-  </div>
-</div>
+          <button
+            className="switchAuth"
+            onClick={() =>
+              setAuthMode(authMode === "signup" ? "signin" : "signup")
+            }
+          >
+            {authMode === "signup"
+              ? "Уже есть аккаунт? Войти"
+              : "Нет аккаунта? Зарегистрироваться"}
+          </button>
         </div>
-
-        <div className="visual">
-          <div className="orb">
-            <div className="coin">₽</div>
-          </div>
-
-          <div className="card cardOne">
-            <span>Доход сегодня</span>
-            <b>+320 ₽</b>
-          </div>
-
-          <div className="card cardTwo">
-            <span>Бонус за отзыв</span>
-            <b>+20 ₽</b>
-          </div>
-        </div>
-      </section>
-
-      <section className="howItWorks">
-
-  <div className="sectionTitle">
-    <span>Как это работает</span>
-
-    <h2>
-      Начните зарабатывать
-      <br />
-      за несколько минут
-    </h2>
-  </div>
-
-  <div className="stepsRow">
-
-    <div className="stepCard">
-      <div className="stepNumber">01</div>
-
-      <h3>Регистрация</h3>
-
-      <p>
-        Создайте аккаунт и получите доступ ко всем возможностям платформы.
-      </p>
-    </div>
-
-    <div className="stepArrow">→</div>
-
-    <div className="stepCard">
-      <div className="stepNumber">02</div>
-
-      <h3>Выбор задания</h3>
-
-      <p>
-        Подберите задание из доступного списка.
-      </p>
-    </div>
-
-    <div className="stepArrow">→</div>
-
-    <div className="stepCard">
-      <div className="stepNumber">03</div>
-
-      <h3>Выполнение</h3>
-
-      <p>
-        Выполните действие и отправьте его на проверку.
-      </p>
-    </div>
-
-    <div className="stepArrow">→</div>
-
-    <div className="stepCard">
-      <div className="stepNumber">04</div>
-
-      <h3>Получение награды</h3>
-
-      <p>
-        Бонус автоматически начислится на баланс.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-<section className="advantagesSection">
-
-  <div className="sectionTitle">
-    <span>Преимущества платформы</span>
-
-    <h2>
-      Почему выбирают
-      <br />
-      BONUSTEST
-    </h2>
-  </div>
-
-  <div className="advantagesGrid">
-
-    <div className="advantageCard">
-      <div className="advantageIcon">💸</div>
-
-      <h3>Быстрые выплаты</h3>
-
-      <p>
-        Получайте вознаграждение после проверки задания и выводите средства удобным способом.
-      </p>
-    </div>
-
-    <div className="advantageCard">
-      <div className="advantageIcon">🔒</div>
-
-      <h3>Безопасность</h3>
-
-      <p>
-        Один аккаунт для сайта, мобильного приложения и Telegram Mini App.
-      </p>
-    </div>
-
-    <div className="advantageCard">
-      <div className="advantageIcon">🚀</div>
-
-      <h3>Больше возможностей</h3>
-
-      <p>
-        Простые задания на сайте и расширенные возможности заработка в экосистеме.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-      <section className="mini">
-        <div>
-          <span>Telegram Mini App</span>
-          <h2>Зарабатывай по-крупному</h2>
-          <p>Больше заданий, бонусы, партнёрская программа и быстрый доступ с телефона.</p>
-        </div>
-        <button className="primaryBtn">Открыть Mini App</button>
-      </section>
-
-      <section className="faq">
-
-  <div className="sectionTitle">
-    <span>FAQ</span>
-
-    <h2>
-      Часто задаваемые вопросы
-    </h2>
-  </div>
-
-  <div className="faqList">
-
-    <div className="faqItem">
-      <h3>Сколько можно заработать?</h3>
-      <p>
-        Доход зависит от активности пользователя и количества выполненных заданий.
-      </p>
-    </div>
-
-    <div className="faqItem">
-      <h3>Нужно ли платить за регистрацию?</h3>
-      <p>
-        Нет. Регистрация полностью бесплатна.
-      </p>
-    </div>
-
-    <div className="faqItem">
-      <h3>Когда начисляется награда?</h3>
-      <p>
-        После проверки выполнения задания системой или модератором.
-      </p>
-    </div>
-
-    <div className="faqItem">
-      <h3>Есть ли мобильное приложение?</h3>
-      <p>
-        Да. Также доступен Telegram Mini App.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<section className="ctaSection">
-
-  <div className="ctaBox">
-
-    <span>Начните сейчас</span>
-
-    <h2>
-      Готовы начать зарабатывать?
-    </h2>
-
-    <p>
-      Создайте аккаунт бесплатно и получите доступ
-      к заданиям уже сегодня.
-    </p>
-
-    <button
-      className="primaryBtn"
-      onClick={() => setShowAuth(true)}
-    >
-      Начать бесплатно
-    </button>
-
-  </div>
-
-</section>
-
-
-
-<section className="supportSection">
-
-  <div className="supportBox">
-
-    <span>Поддержка</span>
-
-    <h2>
-      Остались вопросы?
-    </h2>
-
-    <p>
-      Наша команда поддержки поможет разобраться с заданиями,
-      регистрацией и выводом средств.
-    </p>
-
-    <button
-  className="primaryBtn"
-  onClick={() => {
-    window.open(`https://t.me/${(siteSettings.support_telegram || "").replace("@", "")}`, "_blank");
-  }}
->
-  Написать в поддержку
-</button>
-
-  </div>
-
-</section>
-
-<footer className="footer">
-  
-<div className="footerLogo">
-  {siteSettings.site_name || "BONUSTEST"}
-</div>
-
-  <div className="footerLinks">
-    <a href="#">Пользовательское соглашение</a>
-    <a href="#">Политика конфиденциальности</a>
-    <a href="#">Поддержка</a>
-  </div>
-
-  <div className="footerCopy">
-    © 2026 BONUSTEST
-  </div>
-
-</footer>
-
-      {showAuth && (
-        <div className="modal">
-          <div className="authBox">
-            <button className="close" onClick={() => setShowAuth(false)}>×</button>
-            <h2>Регистрация</h2>
-            <button className="close" onClick={() => setShowAuth(false)}>×</button>
-
-<h2>{authMode === "signup" ? "Регистрация" : "Вход"}</h2>
-
-<input
-  className="authInput"
-  type="email"
-  placeholder="Email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-/>
-
-<input
-  className="authInput"
-  type="password"
-  placeholder="Пароль"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-/>
-
-<button
-  className="primaryBtn authSubmit"
-  onClick={authMode === "signup" ? handleSignUp : handleSignIn}
-  disabled={loading}
->
-  {loading
-    ? "Загрузка..."
-    : authMode === "signup"
-      ? "Создать аккаунт"
-      : "Войти"}
-</button>
-
-<button
-  className="switchAuth"
-  onClick={() => setAuthMode(authMode === "signup" ? "signin" : "signup")}
->
-  {authMode === "signup"
-    ? "Уже есть аккаунт? Войти"
-    : "Нет аккаунта? Зарегистрироваться"}
-</button>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
+      </div>
+    )}
+  </>
+);
 }
