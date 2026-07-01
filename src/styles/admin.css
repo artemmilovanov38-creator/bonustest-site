@@ -1,0 +1,287 @@
+.adminLayout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background: #070b16;
+  color: #f8fbff;
+}
+
+.sidebar {
+  min-height: 100vh;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebarLogo {
+  font-size: 22px;
+  margin-bottom: 32px;
+}
+
+.sidebarLogo span {
+  color: #7ab8ff;
+}
+
+.sidebarMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebarItem,
+.sidebarExit {
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: #dce9ff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.sidebarItem.active,
+.sidebarItem:hover,
+.sidebarExit:hover {
+  background: rgba(122, 184, 255, 0.14);
+}
+
+.adminContent {
+  padding: 32px;
+  overflow: hidden;
+}
+
+.adminTopBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.adminTopBar h1 {
+  font-size: 42px;
+  margin: 0;
+}
+
+.adminTopBar p {
+  margin: 8px 0 0;
+  opacity: 0.7;
+}
+
+.adminProfile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 12px 16px;
+  border-radius: 18px;
+}
+
+.adminAvatar,
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #3b82f6, #d946ef);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.adminProfile h4 {
+  margin: 0;
+}
+
+.adminProfile span {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.adminBody {
+  width: 100%;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.dashboardStat {
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dashboardStat span {
+  opacity: 0.7;
+}
+
+.dashboardStat h2 {
+  margin: 12px 0 0;
+  font-size: 32px;
+}
+
+.dashboardWelcome {
+  padding: 28px;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.18),
+    rgba(217, 70, 239, 0.12)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  width: 320px;
+  max-width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  outline: none;
+}
+
+.usersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.userCard {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 22px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: 0.2s;
+}
+
+.userCard:hover {
+  transform: translateY(-4px);
+  border-color: #7ab8ff;
+}
+
+.userCard h3 {
+  font-size: 17px;
+  word-break: break-word;
+}
+
+.userCard p {
+  opacity: 0.82;
+  line-height: 1.5;
+}
+
+.proofImage {
+  width: 100%;
+  border-radius: 16px;
+  cursor: pointer;
+  margin: 15px 0;
+  transition: 0.2s;
+}
+
+.proofImage:hover {
+  transform: scale(1.02);
+}
+
+.reviewButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.reviewButtons button {
+  flex: 1;
+  min-width: 140px;
+}
+
+.taskEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 30px;
+  max-width: 720px;
+}
+
+.taskTextarea {
+  background: rgba(255, 255, 255, 0.08);
+  border: 0;
+  color: white;
+  padding: 18px;
+  border-radius: 16px;
+  min-height: 140px;
+  resize: vertical;
+  outline: none;
+}
+
+.taskEditor button {
+  width: 220px;
+}
+
+@media (max-width: 900px) {
+  .adminLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebarMenu {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .sidebarItem {
+    white-space: nowrap;
+  }
+
+  .adminContent {
+    padding: 22px;
+  }
+
+  .adminTopBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adminTopBar h1 {
+    font-size: 32px;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .taskEditor button,
+  .reviewButtons button {
+    width: 100%;
+  }
+}
