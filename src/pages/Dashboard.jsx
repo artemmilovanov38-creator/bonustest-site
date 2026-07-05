@@ -43,7 +43,7 @@ export default function Dashboard({
   const [activeTab, setActiveTab] = useState("tasks");
 
 const approvedHistory = taskHistory.filter(
-  (item) => item.status === "approved"
+  (item) => item.status === "approved" || item.rewarded === true
 );
 
   return (

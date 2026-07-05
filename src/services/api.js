@@ -64,6 +64,7 @@ export async function getTaskReviews() {
   const { data, error } = await supabase
     .from("user_tasks")
     .select("*")
+    .eq("status", "pending")
     .order("created_at", { ascending: false });
 
   if (error) return { data: [], error };
