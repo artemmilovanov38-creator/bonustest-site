@@ -198,15 +198,28 @@ const approvedHistory = taskHistory.filter(
 </label>
               )}
 
-              <button
-                className="primaryBtn"
-                disabled={completedTasks.includes(task.id)}
-                onClick={() => completeTask(task)}
-              >
-                {completedTasks.includes(task.id)
-                  ? "На проверке"
-                  : "Отправить"}
-              </button>
+             {(() => {
+  const taskStatus = taskHistory.find(
+    (item) => item.task_id === task.id
+  )?.status;
+
+  return (
+    <button
+      className="primaryBtn"
+      disabled={
+        taskStatus === "pending" ||
+        taskStatus === "approved"
+      }
+      onClick={() => completeTask(task)}
+    >
+      {taskStatus === "pending"
+        ? "На проверке"
+        : taskStatus === "approved"
+        ? "Выполнено"
+        : "Отправить"}
+    </button>
+  );
+})()}
             </div>
           ))}
         </div>

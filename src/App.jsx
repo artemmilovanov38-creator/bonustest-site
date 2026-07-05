@@ -84,14 +84,22 @@ export default function App() {
       setBalance(dbUser.balance);
     }
 
-    const { data: completed } = await supabase
-      .from("user_tasks")
-      .select("task_id")
-      .eq("user_id", session.user.id);
+   const { data: completed } = await supabase
+  .from("user_tasks")
+  .select("task_id, status")
+  .eq("user_id", session.user.id);
 
-    if (completed) {
-      setCompletedTasks(completed.map((item) => item.task_id));
-    }
+if (completed) {
+  setCompletedTasks(
+    completed
+      .filter(
+        (item) =>
+          item.status === "pending" ||
+          item.status === "approved"
+      )
+      .map((item) => item.task_id)
+  );
+}
 
     loadTasks();
     loadTaskHistory(session.user.id);
@@ -184,6 +192,16 @@ export default function App() {
     );
 
     setTaskHistory(historyWithTasks);
+
+    setCompletedTasks(
+  historyWithTasks
+    .filter(
+      (item) =>
+        item.status === "pending" ||
+        item.status === "approved"
+    )
+    .map((item) => item.task_id)
+);
   }
 
   async function loadWithdrawHistory(userId) {
@@ -198,46 +216,72 @@ export default function App() {
     }
   }
 
-  async function completeTask(task) {
-    if (!user) {
-      alert("Сначала войдите в аккаунт");
-      return;
-    }
+ async function completeTask(task) {
+  if (!user) {
+    toast.error("Сначала войдите в аккаунт");
+    return;
+  }
 
-    const file = proofFiles[task.id];
+  const file = proofFiles[task.id];
 
-    if (!file) {
-      toast.error("Прикрепите скриншот выполнения задания");
-      return;
-    }
+  if (!file) {
+    toast.error("Прикрепите скриншот выполнения задания");
+    return;
+  }
 
-    const { data: alreadyDone } = await supabase
+  const { data: alreadyDone } = await supabase
+    .from("user_tasks")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("task_id", task.id);
+
+  const activeRequest = alreadyDone?.find(
+    (item) =>
+      item.status === "pending" ||
+      item.status === "approved"
+  );
+
+  if (activeRequest) {
+    toast.error("Это задание уже отправлено или одобрено");
+    return;
+  }
+
+  const rejectedRequest = alreadyDone?.find(
+    (item) => item.status === "rejected"
+  );
+
+  const filePath = `${user.id}/${task.id}-${Date.now()}-${file.name}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("task-proofs")
+    .upload(filePath, file);
+
+  if (uploadError) {
+    toast.error(uploadError.message);
+    return;
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from("task-proofs")
+    .getPublicUrl(filePath);
+
+  let error;
+
+  if (rejectedRequest) {
+    const result = await supabase
       .from("user_tasks")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("task_id", task.id);
+      .update({
+        completed: true,
+        rewarded: false,
+        status: "pending",
+        proof_url: publicUrlData.publicUrl,
+        created_at: new Date().toISOString(),
+      })
+      .eq("id", rejectedRequest.id);
 
-    if (alreadyDone && alreadyDone.length > 0) {
-      alert("Вы уже отправили это задание");
-      return;
-    }
-
-    const filePath = `${user.id}/${task.id}-${Date.now()}-${file.name}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("task-proofs")
-      .upload(filePath, file);
-
-    if (uploadError) {
-      alert(uploadError.message);
-      return;
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from("task-proofs")
-      .getPublicUrl(filePath);
-
-    const { error } = await supabase.from("user_tasks").insert({
+    error = result.error;
+  } else {
+    const result = await supabase.from("user_tasks").insert({
       user_id: user.id,
       task_id: task.id,
       completed: true,
@@ -246,21 +290,25 @@ export default function App() {
       proof_url: publicUrlData.publicUrl,
     });
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    setCompletedTasks([...completedTasks, task.id]);
-    setProofFiles({
-      ...proofFiles,
-      [task.id]: null,
-    });
-
-    loadTaskHistory(user.id);
-
-    toast.success("Задание отправлено на проверку");
+    error = result.error;
   }
+
+  if (error) {
+    toast.error(error.message);
+    return;
+  }
+
+  setCompletedTasks([...completedTasks, task.id]);
+
+  setProofFiles({
+    ...proofFiles,
+    [task.id]: null,
+  });
+
+  loadTaskHistory(user.id);
+
+  toast.success("Задание отправлено на проверку");
+}
 
   async function createWithdrawRequest() {
     if (!withdrawAmount || !withdrawWallet) {
