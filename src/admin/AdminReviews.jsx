@@ -46,43 +46,55 @@ export default function AdminReviews({ admin }) {
           )}
 
           <div className="reviewButtons">
-            <button
-              className="primaryBtn"
-              onClick={async () => {
-                await updateTaskReview(
-                  item.id,
-                  "approved"
-                );
+           <button
+  className="primaryBtn"
+  onClick={async () => {
+    const { error } = await updateTaskReview(
+      item.id,
+      "approved"
+    );
 
-                await updateUserBalance(
-                  item.dbUser.id,
-                  Number(
-                    item.dbUser.balance
-                  ) +
-                    Number(
-                      item.task.reward
-                    )
-                );
+    if (error) {
+      alert(error.message);
+      return;
+    }
 
-                admin.reload();
-              }}
-            >
-              Одобрить
-            </button>
+    const { error: balanceError } =
+      await updateUserBalance(
+        item.dbUser.id,
+        Number(item.dbUser.balance) +
+          Number(item.task.reward)
+      );
 
-            <button
-              className="secondaryBtn"
-              onClick={async () => {
-                await updateTaskReview(
-                  item.id,
-                  "rejected"
-                );
+    if (balanceError) {
+      alert(balanceError.message);
+      return;
+    }
 
-                admin.reload();
-              }}
-            >
-              Отклонить
-            </button>
+    await admin.reload();
+  }}
+>
+  Одобрить
+</button>
+
+           <button
+  className="secondaryBtn"
+  onClick={async () => {
+    const { error } = await updateTaskReview(
+      item.id,
+      "rejected"
+    );
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    await admin.reload();
+  }}
+>
+  Отклонить
+</button>
           </div>
         </div>
       ))}
