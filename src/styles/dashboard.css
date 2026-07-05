@@ -1,0 +1,517 @@
+.userDashboard {
+  min-height: 100vh;
+  padding: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.22), transparent 35%),
+    #070b16;
+  color: #f8fbff;
+}
+
+.userTopbar {
+  max-width: 1180px;
+  margin: 0 auto 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.userTopbar > div:first-child span {
+  color: #9ccaff;
+  font-weight: 800;
+}
+
+.userTopbar h1 {
+  margin: 8px 0 0;
+  font-size: clamp(24px, 4vw, 42px);
+  word-break: break-word;
+}
+
+.userTopActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.userStatsGrid,
+.dashboardActions,
+.userSection {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.userStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.userStatCard {
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.userStatCard.balance {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(217, 70, 239, 0.16));
+}
+
+.userStatCard span {
+  opacity: 0.7;
+}
+
+.userStatCard h2 {
+  margin: 10px 0 6px;
+  font-size: 34px;
+}
+
+.userStatCard p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.dashboardActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.userSection {
+  margin-top: 38px;
+}
+
+.sectionHead {
+  margin-bottom: 18px;
+}
+
+.sectionHead h2 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.sectionHead p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.taskGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.userTaskCard,
+.historyItem,
+.emptyBox {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.userTaskCard {
+  padding: 24px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.taskTag {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(122, 184, 255, 0.14);
+  color: #9ccaff;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.userTaskCard h3 {
+  margin: 0 0 8px;
+}
+
+.userTaskCard p {
+  margin: 0;
+  opacity: 0.75;
+  line-height: 1.5;
+}
+
+.taskRewardBox {
+  width: fit-content;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  font-weight: 900;
+}
+
+.fileUpload {
+  display: block;
+  cursor: pointer;
+}
+
+.fileUpload input {
+  display: none;
+}
+
+.fileUpload span {
+  display: block;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dbeafe;
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.historyItem,
+.emptyBox {
+  padding: 18px 20px;
+  border-radius: 18px;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.historyItem h3 {
+  margin: 0 0 6px;
+}
+
+.historyItem p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.historyItem strong {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .userDashboard {
+    padding: 20px;
+  }
+
+  .userTopbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .userStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .userTopActions button,
+  .dashboardActions button {
+    width: 100%;
+  }
+
+  .taskGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .historyItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.historyTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.historyCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.05);
+  border-left: 6px solid #555;
+  transition: .2s;
+}
+
+.historyCard:hover {
+  transform: translateX(6px);
+}
+
+.historyCard.pending {
+  border-left-color: #facc15;
+}
+
+.historyCard.approved {
+  border-left-color: #22c55e;
+}
+
+.historyCard.rejected {
+  border-left-color: #ef4444;
+}
+
+.historyCard h3 {
+  margin: 0 0 8px;
+}
+
+.historyCard p {
+  margin: 0;
+  opacity: .7;
+}
+
+.historyCard strong {
+  font-size: 20px;
+}
+
+@media(max-width:768px){
+
+.historyCard{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:16px;
+}
+
+}
+
+
+.withdrawTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.withdrawCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.05);
+  border-left: 6px solid #555;
+  transition: .2s;
+}
+
+.withdrawCard:hover {
+  transform: translateX(6px);
+}
+
+.withdrawCard.pending {
+  border-left-color: #facc15;
+}
+
+.withdrawCard.approved {
+  border-left-color: #22c55e;
+}
+
+.withdrawCard.rejected {
+  border-left-color: #ef4444;
+}
+
+.withdrawCard h3 {
+  margin: 0 0 8px;
+}
+
+.withdrawCard p {
+  margin: 0;
+  opacity: .7;
+}
+
+@media(max-width:768px){
+  .withdrawCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+.fileUpload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  cursor: pointer;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.07);
+  border: 1px dashed rgba(255,255,255,.2);
+  transition: .2s;
+}
+
+.fileUpload:hover {
+  background: rgba(255,255,255,.1);
+  border-color: #7ab8ff;
+}
+
+.fileUpload.hasFile {
+  border-style: solid;
+  border-color: #22c55e;
+  background: rgba(34,197,94,.1);
+}
+
+.fileUpload input {
+  display: none;
+}
+
+.fileUploadIcon {
+  font-size: 20px;
+}
+
+.syncStatus{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 18px;
+    border-radius:14px;
+    background:rgba(34,197,94,.12);
+    color:#86efac;
+    font-weight:700;
+}
+
+.cabinetTabs {
+  max-width: 1180px;
+  margin: 0 auto 28px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cabinetTabs button {
+  padding: 14px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: white;
+  font-weight: 800;
+  transition: .2s;
+}
+
+.cabinetTabs button:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.1);
+}
+
+.cabinetTabs button.active {
+  background: linear-gradient(135deg, #0ea5ff, #7c3aed, #ff2bd6);
+  border-color: transparent;
+}
+
+@media(max-width:768px){
+  .cabinetTabs button {
+    width: 100%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 640px) {
+  .userDashboard {
+    padding: 14px;
+  }
+
+  .userTopbar {
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .userTopbar h1 {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .userTopActions {
+    flex-direction: column;
+  }
+
+  .userTopActions button,
+  .dashboardActions button,
+  .cabinetTabs button {
+    width: 100%;
+  }
+
+  .userStatsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .userStatCard {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .userStatCard h2 {
+    font-size: 28px;
+  }
+
+  .dashboardActions {
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .cabinetTabs {
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .userSection {
+    margin-top: 24px;
+  }
+
+  .sectionHead h2 {
+    font-size: 24px;
+  }
+
+  .taskGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .userTaskCard {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .historyCard,
+  .withdrawCard,
+  .historyItem,
+  .emptyBox {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .historyCard,
+  .withdrawCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .fileUpload {
+    padding: 14px;
+    text-align: center;
+  }
+
+  .withdrawModal {
+    max-width: 100%;
+    padding: 24px;
+    border-radius: 24px;
+  }
+}

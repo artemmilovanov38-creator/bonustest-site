@@ -285,3 +285,62 @@
     width: 100%;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 640px) {
+  .adminContent {
+    padding: 16px;
+  }
+
+  .adminTopBar h1 {
+    font-size: 28px;
+  }
+
+  .adminProfile {
+    width: 100%;
+  }
+
+  .sidebar {
+    padding: 16px;
+  }
+
+  .sidebarMenu {
+    gap: 8px;
+  }
+
+  .sidebarItem,
+  .sidebarExit {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .dashboardGrid,
+  .usersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboardStat,
+  .userCard {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .reviewButtons {
+    flex-direction: column;
+  }
+
+  .reviewButtons button {
+    width: 100%;
+  }
+}
