@@ -11,11 +11,13 @@ export default function App() {
   const [authMode, setAuthMode] = useState("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminRole, setAdminRole] = useState(null);
   const [isAdminPanel, setIsAdminPanel] = useState(false);
 
   const [siteStats, setSiteStats] = useState({
@@ -42,17 +44,7 @@ export default function App() {
     loadSiteSettings();
   }, []);
 
-  useEffect(() => {
-  if (!user) return;
-
-  const interval = setInterval(() => {
-    loadTaskHistory(user.id);
-    loadWithdrawHistory(user.id);
-    loadTasks();
-  }, 10000);
-
-  return () => clearInterval(interval);
-}, [user]);
+  
 
   async function checkUser() {
     const {
@@ -64,21 +56,25 @@ export default function App() {
       return;
     }
 
-    setUser(session.user);
     checkIsAdmin(session.user.email);
 
     const { data: dbUser } = await supabase
       .from("users")
       .select("*")
       .eq("auth_id", session.user.id)
-      .single();
+     .maybeSingle();
 
     if (dbUser) {
       if (dbUser.is_blocked) {
         alert("Ваш аккаунт заблокирован");
+        
         await supabase.auth.signOut();
         setUser(null);
         return;
+        setUser({
+  ...session.user,
+  name: dbUser.name || "",
+});
       }
 
       setBalance(dbUser.balance);
@@ -107,19 +103,21 @@ if (completed) {
   }
 
   async function checkIsAdmin(email) {
-    const { data, error } = await supabase
-      .from("admins")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
+  const { data, error } = await supabase
+    .from("admins")
+    .select("email, role")
+    .ilike("email", email)
+    .maybeSingle();
 
-    if (error) {
-      setIsAdmin(false);
-      return;
-    }
-
-    setIsAdmin(!!data);
+  if (error || !data) {
+    setIsAdmin(false);
+    setAdminRole(null);
+    return;
   }
+
+  setIsAdmin(true);
+  setAdminRole(data.role || "admin");
+}
 
   async function loadTasks() {
     const { data, error } = await supabase
@@ -182,7 +180,7 @@ if (completed) {
           .from("tasks")
           .select("*")
           .eq("id", item.task_id)
-          .single();
+          .maybeSingle();
 
         return {
           ...item,
@@ -369,10 +367,10 @@ if (completed) {
   }
 
   async function handleSignUp() {
-    if (!email || !password) {
-      alert("Введите email и пароль");
-      return;
-    }
+    if (!name.trim() || !email || !password) {
+  toast.error("Введите имя, email и пароль");
+  return;
+}
 
     try {
       setLoading(true);
@@ -389,10 +387,11 @@ if (completed) {
 
       if (data?.user) {
         const { error: insertError } = await supabase.from("users").insert({
-          auth_id: data.user.id,
-          email: data.user.email,
-          balance: 0,
-        });
+  auth_id: data.user.id,
+  email: data.user.email,
+  name: name.trim(),
+  balance: 0,
+});
 
         if (insertError) {
           alert(insertError.message);
@@ -400,6 +399,7 @@ if (completed) {
       }
 
       alert("Аккаунт создан. Теперь можно войти.");
+      setName("");
       setAuthMode("signin");
     } finally {
       setLoading(false);
@@ -407,34 +407,60 @@ if (completed) {
   }
 
   async function handleSignIn() {
-    if (!email || !password) {
-      alert("Введите email и пароль");
+  if (!email || !password) {
+    toast.error("Введите email и пароль");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      toast.error(error.message);
       return;
     }
 
-    try {
-      setLoading(true);
+    const { data: dbUser, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("auth_id", data.user.id)
+      .maybeSingle();
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      setUser(data.user);
-      checkIsAdmin(data.user.email);
-      loadTaskHistory(data.user.id);
-      loadWithdrawHistory(data.user.id);
-      loadTasks();
-      setShowAuth(false);
-    } finally {
-      setLoading(false);
+    if (userError) {
+      toast.error(userError.message);
+      return;
     }
+
+    if (dbUser?.is_blocked) {
+      toast.error("Ваш аккаунт заблокирован");
+      await supabase.auth.signOut();
+      return;
+    }
+
+    setUser({
+      ...data.user,
+      name: dbUser?.name || "",
+    });
+
+    setBalance(dbUser?.balance || 0);
+
+    await checkIsAdmin(data.user.email);
+    await loadTaskHistory(data.user.id);
+    await loadWithdrawHistory(data.user.id);
+    await loadTasks();
+
+    setShowAuth(false);
+    setEmail("");
+    setPassword("");
+  } finally {
+    setLoading(false);
   }
+}
 
   async function signOutUser() {
     await supabase.auth.signOut();
@@ -443,7 +469,12 @@ if (completed) {
   }
 
   if (user && isAdminPanel) {
-    return <Admin onExit={() => setIsAdminPanel(false)} />;
+    return (
+  <Admin
+    role={adminRole}
+    onExit={() => setIsAdminPanel(false)}
+  />
+);
   }
 
  if (user) {
@@ -497,6 +528,16 @@ if (completed) {
             </button>
 
             <h2>{authMode === "signup" ? "Регистрация" : "Вход"}</h2>
+
+            {authMode === "signup" && (
+  <input
+    className="authInput"
+    type="text"
+    placeholder="Ваше имя"
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+  />
+)}
 
             <input
               className="authInput"

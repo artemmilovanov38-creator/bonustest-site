@@ -285,8 +285,592 @@
     width: 100%;
   }
 }
+.adminSupport {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+}
 
+.supportDialogs,
+.supportConversation {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  padding: 20px;
+}
 
+.supportDialogs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialogItem {
+  text-align: left;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid transparent;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialogItem.active,
+.dialogItem:hover {
+  border-color: #7ab8ff;
+}
+
+.dialogItem span {
+  opacity: .65;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supportConversation {
+  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversationHeader {
+  margin-bottom: 16px;
+}
+
+.adminChatMessages {
+  flex: 1;
+}
+
+@media(max-width:900px){
+  .adminSupport {
+    grid-template-columns: 1fr;
+  }
+}
+.dialogSearch {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.07);
+  color: white;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.dialogSearch::placeholder {
+  color: rgba(255,255,255,.45);
+}
+.adminCheck {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.adminCheck input {
+  width: 18px;
+  height: 18px;
+}
+.adminTeamChat {
+  height: calc(100vh - 150px);
+  min-height: 620px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 26px;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(59, 130, 246, 0.16),
+      transparent 35%
+    ),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.teamChatHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.teamChatAvatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    #0ea5ff,
+    #7c3aed,
+    #d946ef
+  );
+}
+
+.teamChatHeader h2 {
+  margin: 0 0 4px;
+}
+
+.teamChatHeader p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.65;
+}
+
+.teamChatSecure {
+  margin-left: auto;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(34, 197, 94, 0.11);
+  color: #86efac;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.teamChatMessages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+}
+
+.teamChatEmpty {
+  margin: auto;
+  text-align: center;
+  opacity: 0.72;
+}
+
+.teamChatEmpty > div {
+  margin-bottom: 12px;
+  font-size: 46px;
+}
+
+.teamChatEmpty h3 {
+  margin-bottom: 8px;
+}
+
+.teamChatEmpty p {
+  margin: 0;
+}
+
+.teamMessage {
+  max-width: 72%;
+  padding: 14px 17px;
+  border-radius: 19px;
+  animation: chatIn 0.18s ease;
+}
+
+.teamMessage p {
+  margin: 6px 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.teamMessage span {
+  display: block;
+  font-size: 11px;
+  opacity: 0.58;
+}
+
+.teamMessage strong {
+  display: block;
+  color: #9ccaff;
+  font-size: 12px;
+}
+
+.teamMessage.own {
+  align-self: flex-end;
+  color: white;
+  border-bottom-right-radius: 6px;
+  background: linear-gradient(
+    135deg,
+    #0ea5ff,
+    #7c3aed,
+    #d946ef
+  );
+}
+
+.teamMessage.other {
+  align-self: flex-start;
+  border-bottom-left-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.teamChatForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.teamChatForm textarea {
+  flex: 1;
+  min-height: 54px;
+  max-height: 140px;
+  resize: vertical;
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+}
+
+.teamChatForm textarea::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.teamChatForm button {
+  width: 58px;
+  height: 54px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .adminTeamChat {
+    height: calc(100vh - 110px);
+    min-height: 520px;
+    border-radius: 20px;
+  }
+
+  .teamChatHeader {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .teamChatSecure {
+    display: none;
+  }
+
+  .teamChatMessages {
+    padding: 16px;
+  }
+
+  .teamMessage {
+    max-width: 88%;
+  }
+
+  .teamChatForm {
+    padding: 12px;
+  }
+}
+.sidebarRole {
+  margin: -18px 0 26px;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(122, 184, 255, 0.12);
+  color: #9ccaff;
+  font-size: 12px;
+  font-weight: 800;
+}
+.pageSubtitle {
+  margin: 8px 0 0;
+  opacity: 0.65;
+}
+
+.usersAdminTable {
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.usersTableHead,
+.usersTableRow {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 2fr)
+    minmax(110px, .7fr)
+    minmax(150px, 1fr)
+    minmax(130px, .8fr)
+    minmax(120px, .8fr)
+    minmax(120px, .7fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.usersTableHead {
+  padding: 16px 20px;
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.55);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.usersTableRow {
+  padding: 18px 20px;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.usersTableRow:hover {
+  background: rgba(255,255,255,.035);
+}
+
+.userIdentity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.userIdentity > div:last-child {
+  min-width: 0;
+}
+
+.userIdentity strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userIdentity span {
+  display: block;
+  margin-top: 5px;
+  opacity: .48;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userAvatar {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-weight: 900;
+  background: linear-gradient(135deg,#0ea5ff,#7c3aed);
+}
+
+.roleBadge,
+.userStatusBadge {
+  width: fit-content;
+  padding: 8px 11px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.role-user {
+  background: rgba(148,163,184,.12);
+  color: #cbd5e1;
+}
+
+.role-admin {
+  background: rgba(59,130,246,.13);
+  color: #93c5fd;
+}
+
+.role-creator {
+  background: rgba(250,204,21,.13);
+  color: #fde047;
+}
+
+.userStatusBadge.active {
+  background: rgba(34,197,94,.11);
+  color: #86efac;
+}
+
+.userStatusBadge.blocked {
+  background: rgba(239,68,68,.12);
+  color: #fca5a5;
+}
+
+.userManageBtn {
+  padding: 11px 14px;
+}
+
+.userDrawerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(2,6,23,.72);
+  backdrop-filter: blur(8px);
+}
+
+.userDrawer {
+  width: min(520px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  padding: 26px;
+  background: #0d1423;
+  border-left: 1px solid rgba(255,255,255,.1);
+  box-shadow: -24px 0 70px rgba(0,0,0,.4);
+}
+
+.userDrawerHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.userDrawerHeader span {
+  opacity: .55;
+  font-size: 13px;
+}
+
+.userDrawerHeader h2 {
+  margin: 7px 0 0;
+  word-break: break-word;
+}
+
+.drawerClose {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,.07);
+  color: white;
+  font-size: 24px;
+}
+
+.drawerSection {
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.drawerSection h3 {
+  margin-bottom: 16px;
+}
+
+.drawerBalance {
+  margin-bottom: 15px;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.balanceModeSwitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 6px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.05);
+}
+
+.balanceModeSwitch button {
+  padding: 11px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255,255,255,.65);
+  font-weight: 800;
+}
+
+.balanceModeSwitch button.active {
+  color: white;
+  background: linear-gradient(135deg,#0ea5ff,#7c3aed);
+}
+
+.drawerActionBtn {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.drawerActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawerActions button {
+  width: 100%;
+  text-align: left;
+}
+
+.drawerCurrentRole {
+  opacity: .72;
+}
+
+.dangerZone {
+  border-bottom: 0;
+}
+
+.dangerZone p {
+  opacity: .65;
+  line-height: 1.5;
+}
+
+.dangerBtn {
+  padding: 15px 18px;
+  border: 1px solid rgba(239,68,68,.35);
+  border-radius: 16px;
+  background: rgba(239,68,68,.12);
+  color: #fca5a5;
+  font-weight: 900;
+}
+
+@media(max-width:1100px) {
+  .usersTableHead {
+    display: none;
+  }
+
+  .usersAdminTable {
+    display: grid;
+    gap: 14px;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .usersTableRow {
+    grid-template-columns: 1fr 1fr;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px;
+    background: rgba(255,255,255,.045);
+  }
+
+  .userIdentity {
+    grid-column: 1 / -1;
+  }
+}
+
+@media(max-width:600px) {
+  .usersTableRow {
+    grid-template-columns: 1fr;
+  }
+
+  .userIdentity {
+    grid-column: auto;
+  }
+
+  .userManageBtn {
+    width: 100%;
+  }
+
+  .userDrawer {
+    padding: 20px;
+  }
+}
 
 
 

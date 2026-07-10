@@ -1,19 +1,25 @@
 import Sidebar from "../layout/Sidebar";
 
+
 export default function AdminLayout({
+  role,
   activeTab,
   setActiveTab,
   children,
   onExit,
-}) {
+})
+ {
+  
+  
   return (
     <div className="adminLayout">
 
       <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onExit={onExit}
-      />
+  role={role}
+  activeTab={activeTab}
+  setActiveTab={setActiveTab}
+  onExit={onExit}
+/>
 
       <main className="adminContent">
 
@@ -32,7 +38,11 @@ export default function AdminLayout({
 
             <div>
               <h4>Администратор</h4>
-              <span>Полный доступ</span>
+              <span>
+  {role === "creator"
+    ? "Создатель · полный доступ"
+    : "Администратор"}
+</span>
             </div>
 
           </div>

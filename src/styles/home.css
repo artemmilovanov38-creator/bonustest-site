@@ -279,3 +279,83 @@
     align-items: flex-start;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 640px) {
+  .header,
+  .hero,
+  .howItWorks,
+  .advantagesSection,
+  .supportSection,
+  .footer {
+    width: calc(100% - 28px);
+  }
+
+  .header {
+    padding: 18px 0;
+  }
+
+  .hero {
+    padding: 44px 0;
+    gap: 28px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    padding: 18px;
+  }
+
+  .howItWorks,
+  .advantagesSection,
+  .supportSection {
+    padding: 50px 0;
+  }
+
+  .sectionTitle h2 {
+    font-size: 32px;
+  }
+
+  .stepCard,
+  .advantageCard,
+  .supportBox {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .footerLinks {
+    flex-direction: column;
+  }
+}
