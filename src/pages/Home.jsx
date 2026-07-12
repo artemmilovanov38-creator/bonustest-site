@@ -44,43 +44,40 @@ export default function Home({ siteSettings, siteStats, setShowAuth }) {
             </button>
           </div>
 
-          <div className="stats v2Stats">
-            <div className="stat">
+        <div className="stats v2Stats">
+  <div className="stat">
+    <div className="statIcon">👥</div>
 
-<div className="statIcon">
-👥
+    <b>
+      {siteSettings.display_users ||
+        `${siteStats.users || 0}+`}
+    </b>
+
+    <span>Пользователей</span>
+  </div>
+
+  <div className="stat">
+    <div className="statIcon">💸</div>
+
+    <b>
+      {siteSettings.display_paid ||
+        `${Number(siteStats.paid || 0).toLocaleString("ru-RU")} ₽`}
+    </b>
+
+    <span>Выплачено</span>
+  </div>
+
+  <div className="stat">
+    <div className="statIcon">🎯</div>
+
+    <b>
+      {siteSettings.display_tasks ||
+        `${siteStats.tasks || 0}+`}
+    </b>
+
+    <span>Заданий</span>
+  </div>
 </div>
-
-<b>2 359+</b>
-
-<span>Пользователей</span>
-
-</div>
-
-            <div className="stat">
-
-<div className="statIcon">
-💸
-</div>
-
-<b>2 359+</b>
-
-<span>Пользователей</span>
-
-</div>
-
-            <div className="stat">
-
-<div className="statIcon">
-🎯
-</div>
-
-<b>2 359+</b>
-
-<span>Пользователей</span>
-
-</div>
-          </div>
         </div>
 
         <div className="visual v2Visual">

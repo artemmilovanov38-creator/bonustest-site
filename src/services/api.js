@@ -62,8 +62,15 @@ export async function getSiteSettings() {
 export async function updateSiteSettingApi(key, value) {
   return supabase
     .from("site_settings")
-    .update({ value })
-    .eq("key", key);
+    .upsert(
+      {
+        key,
+        value,
+      },
+      {
+        onConflict: "key",
+      }
+    );
 }
 
 export async function checkAdmin(email) {
