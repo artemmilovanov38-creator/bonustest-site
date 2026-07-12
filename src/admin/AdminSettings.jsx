@@ -9,27 +9,63 @@ export default function AdminSettings() {
   const [supportTelegram, setSupportTelegram] = useState("");
   const [siteName, setSiteName] = useState("");
 
-  async function loadSettings() {
-    const { data } = await getSiteSettings();
+  const [displayUsers, setDisplayUsers] = useState("");
+  const [displayPaid, setDisplayPaid] = useState("");
+  const [displayTasks, setDisplayTasks] = useState("");
 
-    const settings = {};
+  const [saving, setSaving] = useState(false);
+
+  async function loadSettings() {
+    const { data, error } = await getSiteSettings();
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    const values = {};
 
     (data || []).forEach((item) => {
-      settings[item.key] = item.value;
+      values[item.key] = item.value;
     });
 
-    setMinWithdraw(settings.min_withdraw || "");
-    setSupportTelegram(settings.support_telegram || "");
-    setSiteName(settings.site_name || "");
+    setMinWithdraw(values.min_withdraw || "");
+    setSupportTelegram(values.support_telegram || "");
+    setSiteName(values.site_name || "");
+
+    setDisplayUsers(values.display_users || "");
+    setDisplayPaid(values.display_paid || "");
+    setDisplayTasks(values.display_tasks || "");
+  }
+
+  async function saveValue(key, value) {
+    const { error } = await updateSiteSettingApi(key, value);
+
+    if (error) {
+      throw new Error(error.message);
+    }
   }
 
   async function saveSettings() {
-    await updateSiteSettingApi("min_withdraw", minWithdraw);
-    await updateSiteSettingApi("support_telegram", supportTelegram);
-    await updateSiteSettingApi("site_name", siteName);
+    try {
+      setSaving(true);
 
-    alert("Настройки сохранены");
-    loadSettings();
+      await Promise.all([
+        saveValue("min_withdraw", minWithdraw),
+        saveValue("support_telegram", supportTelegram),
+        saveValue("site_name", siteName),
+        saveValue("display_users", displayUsers),
+        saveValue("display_paid", displayPaid),
+        saveValue("display_tasks", displayTasks),
+      ]);
+
+      alert("Настройки сохранены");
+      await loadSettings();
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setSaving(false);
+    }
   }
 
   useEffect(() => {
@@ -39,13 +75,20 @@ export default function AdminSettings() {
   return (
     <>
       <div className="pageHeader">
-        <h1>Настройки</h1>
+        <div>
+          <h1>Настройки</h1>
+          <p className="pageSubtitle">
+            Параметры сайта и статистика главной страницы
+          </p>
+        </div>
       </div>
 
       <div className="taskEditor">
+        <h2>Основные настройки</h2>
+
         <input
           className="searchInput"
-          placeholder="Минимальный вывод"
+          placeholder="Минимальная сумма вывода"
           value={minWithdraw}
           onChange={(e) => setMinWithdraw(e.target.value)}
         />
@@ -63,35 +106,36 @@ export default function AdminSettings() {
           value={siteName}
           onChange={(e) => setSiteName(e.target.value)}
         />
+
+        <h2>Статистика на главной</h2>
+
         <input
-  className="searchInput"
-  placeholder="Количество пользователей"
-  value={settings.display_users || ""}
-  onChange={(e)=>
-    updateSetting("display_users",e.target.value)
-  }
-/>
+          className="searchInput"
+          placeholder="Например: 2 359+"
+          value={displayUsers}
+          onChange={(e) => setDisplayUsers(e.target.value)}
+        />
 
-<input
-  className="searchInput"
-  placeholder="Выплачено"
-  value={settings.display_paid || ""}
-  onChange={(e)=>
-    updateSetting("display_paid",e.target.value)
-  }
-/>
+        <input
+          className="searchInput"
+          placeholder="Например: 10 523 500 ₽"
+          value={displayPaid}
+          onChange={(e) => setDisplayPaid(e.target.value)}
+        />
 
-<input
-  className="searchInput"
-  placeholder="Количество заданий"
-  value={settings.display_tasks || ""}
-  onChange={(e)=>
-    updateSetting("display_tasks",e.target.value)
-  }
-/>
+        <input
+          className="searchInput"
+          placeholder="Например: 20+"
+          value={displayTasks}
+          onChange={(e) => setDisplayTasks(e.target.value)}
+        />
 
-        <button className="primaryBtn" onClick={saveSettings}>
-          Сохранить настройки
+        <button
+          className="primaryBtn"
+          onClick={saveSettings}
+          disabled={saving}
+        >
+          {saving ? "Сохранение..." : "Сохранить настройки"}
         </button>
       </div>
     </>
