@@ -46,17 +46,19 @@ export default function Home({ siteSettings, siteStats, setShowAuth }) {
 
           <div className="stats v2Stats">
             <div className="stat">
-              <b>{siteStats.users}+</b>
+              <b>{siteSettings.display_users || siteStats.users}+</b>
               <span>пользователей</span>
             </div>
 
             <div className="stat">
-              <b>{siteStats.paid} ₽</b>
+              <b>{Number(
+  siteSettings.display_paid || siteStats.paid
+).toLocaleString("ru-RU")} ₽ ₽</b>
               <span>выплачено</span>
             </div>
 
             <div className="stat">
-              <b>{siteStats.tasks}+</b>
+              <b>{siteSettings.display_tasks || siteStats.tasks}+</b>
               <span>заданий</span>
             </div>
           </div>
