@@ -63,6 +63,32 @@ export default function AdminSettings() {
           value={siteName}
           onChange={(e) => setSiteName(e.target.value)}
         />
+        <input
+  className="searchInput"
+  placeholder="Количество пользователей"
+  value={settings.display_users || ""}
+  onChange={(e)=>
+    updateSetting("display_users",e.target.value)
+  }
+/>
+
+<input
+  className="searchInput"
+  placeholder="Выплачено"
+  value={settings.display_paid || ""}
+  onChange={(e)=>
+    updateSetting("display_paid",e.target.value)
+  }
+/>
+
+<input
+  className="searchInput"
+  placeholder="Количество заданий"
+  value={settings.display_tasks || ""}
+  onChange={(e)=>
+    updateSetting("display_tasks",e.target.value)
+  }
+/>
 
         <button className="primaryBtn" onClick={saveSettings}>
           Сохранить настройки
