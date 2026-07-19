@@ -871,6 +871,168 @@
     padding: 20px;
   }
 }
+.adminTaskCreate,
+.adminTaskListSection {
+  margin-bottom: 34px;
+  padding: 26px;
+  border-radius: 26px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.adminTaskSectionHeader {
+  margin-bottom: 22px;
+}
+
+.adminTaskSectionHeader span {
+  color: #9ccaff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.adminTaskSectionHeader h2 {
+  margin: 7px 0 0;
+}
+
+.adminTaskFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adminTaskFieldsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.adminField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminField > span {
+  color: rgba(255,255,255,.72);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.adminTaskChecks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.adminCheck {
+  align-items: flex-start;
+}
+
+.adminCheck > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adminCheck small {
+  opacity: .55;
+  line-height: 1.4;
+}
+
+.adminTaskSaveBtn {
+  width: 240px;
+  margin-top: 20px;
+}
+
+.adminTaskCard {
+  gap: 18px;
+}
+
+.adminTaskCardHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.adminTaskStatus,
+.adminTaskHot {
+  width: fit-content;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.adminTaskStatus.active {
+  color: #86efac;
+  background: rgba(34,197,94,.11);
+}
+
+.adminTaskStatus.hidden {
+  color: #cbd5e1;
+  background: rgba(148,163,184,.12);
+}
+
+.adminTaskHot {
+  color: #fdba74;
+  background: rgba(249,115,22,.12);
+}
+
+.adminTaskInstruction {
+  padding: 14px;
+  border-radius: 15px;
+  background: rgba(255,255,255,.045);
+}
+
+.adminTaskInstruction p {
+  margin: 7px 0 0;
+  white-space: pre-wrap;
+}
+
+.adminTaskMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.adminTaskMetaGrid > div {
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+}
+
+.adminTaskMetaGrid span,
+.adminTaskMetaGrid strong {
+  display: block;
+}
+
+.adminTaskMetaGrid span {
+  margin-bottom: 6px;
+  opacity: .55;
+  font-size: 12px;
+}
+
+.adminTaskEditTitle {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+@media(max-width:800px) {
+  .adminTaskFieldsRow,
+  .adminTaskChecks,
+  .adminTaskMetaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminTaskCreate,
+  .adminTaskListSection {
+    padding: 18px;
+  }
+
+  .adminTaskSaveBtn {
+    width: 100%;
+  }
+}
 
 
 
