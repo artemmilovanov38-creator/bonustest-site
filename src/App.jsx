@@ -181,12 +181,18 @@ async function loadCurrentUser(authUser) {
   setAdminRole(data.role || "admin");
 }
 
+
+
   async function loadTasks() {
   const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .order("is_hot", { ascending: false })
-    .order("id", { ascending: true });
+  .from("tasks")
+  .select("*")
+  .order("is_hot", { ascending: false })
+  .order("sort_order", {
+    ascending: true,
+    nullsFirst: false,
+  })
+  .order("id", { ascending: true });
 
   if (!error) {
     setTasks(data || []);

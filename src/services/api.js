@@ -5,15 +5,25 @@ export async function getTasks() {
     .from("tasks")
     .select("*")
     .eq("is_active", true)
-    .order("id");
+    .order("is_hot", { ascending: false })
+    .order("sort_order", {
+      ascending: true,
+      nullsFirst: false,
+    })
+    .order("id", { ascending: true });
 }
+
 export async function getAdminTasks() {
   return supabase
     .from("tasks")
     .select("*")
-    .order("id");
+    .order("is_hot", { ascending: false })
+    .order("sort_order", {
+      ascending: true,
+      nullsFirst: false,
+    })
+    .order("id", { ascending: true });
 }
-
 export async function createTaskApi(task) {
   return supabase.from("tasks").insert(task);
 }

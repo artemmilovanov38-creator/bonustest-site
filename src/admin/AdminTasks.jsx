@@ -207,6 +207,7 @@ export default function AdminTasks({ admin }) {
   const [editId, setEditId] = useState(null);
   const [editForm, setEditForm] = useState(createEmptyTask);
   const [saving, setSaving] = useState(false);
+  const [openedAdminTasks, setOpenedAdminTasks] = useState({});
 
   function updateForm(key, value) {
     setForm((previousForm) => ({
@@ -277,9 +278,17 @@ export default function AdminTasks({ admin }) {
     try {
       setSaving(true);
 
-      const { error } = await createTaskApi(
-        prepareTask(form)
-      );
+      const taskData = prepareTask(form);
+
+taskData.sort_order =
+  Math.max(
+    0,
+    ...(admin.tasks || []).map(
+      (task) => Number(task.sort_order) || 0
+    )
+  ) + 1;
+
+const { error } = await createTaskApi(taskData);
 
       if (error) {
         alert(error.message);
@@ -376,9 +385,81 @@ export default function AdminTasks({ admin }) {
     }
   }
 
-  if (admin.loading) {
-    return <h2>Загрузка заданий...</h2>;
+  async function moveTask(task, direction) {
+  if (saving) return;
+
+  const taskList = admin.tasks || [];
+
+  const currentIndex = taskList.findIndex(
+    (item) => item.id === task.id
+  );
+
+  if (currentIndex === -1) return;
+
+  const sameGroupTasks = taskList.filter(
+    (item) => Boolean(item.is_hot) === Boolean(task.is_hot)
+  );
+
+  const groupIndex = sameGroupTasks.findIndex(
+    (item) => item.id === task.id
+  );
+
+  const targetGroupIndex =
+    direction === "up"
+      ? groupIndex - 1
+      : groupIndex + 1;
+
+  if (
+    targetGroupIndex < 0 ||
+    targetGroupIndex >= sameGroupTasks.length
+  ) {
+    return;
   }
+
+  const targetTask = sameGroupTasks[targetGroupIndex];
+
+  const currentOrder =
+    task.sort_order ?? currentIndex;
+
+  const targetOrder =
+    targetTask.sort_order ??
+    taskList.findIndex((item) => item.id === targetTask.id);
+
+  try {
+    setSaving(true);
+
+    const { error: currentError } = await updateTaskApi(
+      task.id,
+      {
+        sort_order: targetOrder,
+      }
+    );
+
+    if (currentError) {
+      alert(currentError.message);
+      return;
+    }
+
+    const { error: targetError } = await updateTaskApi(
+      targetTask.id,
+      {
+        sort_order: currentOrder,
+      }
+    );
+
+    if (targetError) {
+      alert(targetError.message);
+      return;
+    }
+
+    await admin.reload();
+  } finally {
+    setSaving(false);
+  }
+}
+if (admin.loading) {
+  return <h2>Загрузка заданий...</h2>;
+}
 
   return (
     <>
@@ -431,8 +512,12 @@ export default function AdminTasks({ admin }) {
             <div className="emptyBox">
               Заданий пока нет
             </div>
+
+            
           ) : (
-            admin.tasks.map((task) => (
+
+            
+            admin.tasks.map((task, index) => (
               <article
                 key={task.id}
                 className="userCard adminTaskCard"
@@ -467,108 +552,165 @@ export default function AdminTasks({ admin }) {
                     </div>
                   </>
                 ) : (
-                  <>
-                    <div className="adminTaskCardHead">
-                      <span
-                        className={`adminTaskStatus ${
-                          task.is_active
-                            ? "active"
-                            : "hidden"
-                        }`}
-                      >
-                        {task.is_active
-                          ? "Активно"
-                          : "Скрыто"}
-                      </span>
+  <>
+    <div className="adminCompactTaskHead">
+      <div className="adminCompactTaskBadges">
+        <span
+          className={`adminTaskStatus ${
+            task.is_active ? "active" : "hidden"
+          }`}
+        >
+          {task.is_active ? "Активно" : "Скрыто"}
+        </span>
 
-                      {task.is_hot && (
-                        <span className="adminTaskHot">
-                          🔥 Горячее
-                        </span>
-                      )}
-                    </div>
+        <span className="adminCompactTime">
+          ⏱ {task.estimated_time || "2 минуты"}
+        </span>
+      </div>
 
-                    <h3>{task.title}</h3>
+      <strong className="adminCompactReward">
+        +{task.reward} ₽
+      </strong>
+    </div>
 
-                    <p>{task.description}</p>
+    <div className="adminCompactTaskMain">
+      <div
+        className={`taskIcon ${
+          task.is_hot ? "hotTaskIcon" : ""
+        }`}
+      >
+        {task.is_hot ? "🔥" : "⭐"}
+      </div>
 
-                    {task.instruction && (
-                      <div className="adminTaskInstruction">
-                        <strong>Инструкция</strong>
-                        <p>{task.instruction}</p>
-                      </div>
-                    )}
+      <div className="adminCompactTaskInfo">
+        <h3>{task.title}</h3>
 
-                    <div className="adminTaskMetaGrid">
-                      <div>
-                        <span>Награда</span>
-                        <strong>{task.reward} ₽</strong>
-                      </div>
+        <p className="adminCompactDescription">
+          {task.description}
+        </p>
+      </div>
+    </div>
 
-                      <div>
-                        <span>Категория</span>
-                        <strong>
-                          {task.category || "Общее"}
-                        </strong>
-                      </div>
+    <button
+      type="button"
+      className="taskOpenBtn adminTaskOpenBtn"
+      onClick={() =>
+        setOpenedAdminTasks((previous) => ({
+          ...previous,
+          [task.id]: !previous[task.id],
+        }))
+      }
+    >
+      {openedAdminTasks[task.id]
+        ? "▲ Свернуть задание"
+        : "▼ Открыть задание"}
+    </button>
 
-                      <div>
-                        <span>Сложность</span>
-                        <strong>
-                          {task.difficulty || "Простое"}
-                        </strong>
-                      </div>
+    {openedAdminTasks[task.id] && (
+      <div className="adminTaskExpandedContent">
+        {task.instruction && (
+          <div className="adminTaskInstruction">
+            <strong>Подробная инструкция</strong>
+            <p>{task.instruction}</p>
+          </div>
+        )}
 
-                      <div>
-                        <span>Время</span>
-                        <strong>
-                          {task.estimated_time ||
-                            "2 минуты"}
-                        </strong>
-                      </div>
+        <div className="adminTaskMetaGrid">
+          <div>
+            <span>Категория</span>
+            <strong>{task.category || "Общее"}</strong>
+          </div>
 
-                      <div>
-                        <span>Скриншот</span>
-                        <strong>
-                          {task.proof_required
-                            ? "Требуется"
-                            : "Не требуется"}
-                        </strong>
-                      </div>
-                    </div>
+          <div>
+            <span>Сложность</span>
+            <strong>{task.difficulty || "Простое"}</strong>
+          </div>
 
-                    {task.task_link && (
-                      <a
-                        href={task.task_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="adminTaskLink"
-                      >
-                        Открыть ссылку задания
-                      </a>
-                    )}
+          <div>
+            <span>Время</span>
+            <strong>
+              {task.estimated_time || "2 минуты"}
+            </strong>
+          </div>
 
-                    <div className="reviewButtons">
-                      <button
-                        className="secondaryBtn"
-                        onClick={() => startEdit(task)}
-                        disabled={saving}
-                      >
-                        Редактировать
-                      </button>
+          <div>
+            <span>Скриншот</span>
+            <strong>
+              {task.proof_required
+                ? "Требуется"
+                : "Не требуется"}
+            </strong>
+          </div>
 
-                      <button
-                        className="dangerBtn"
-                        onClick={() =>
-                          removeTask(task.id)
-                        }
-                        disabled={saving}
-                      >
-                        Удалить
-                      </button>
-                    </div>
-                  </>
-                )}
+          <div>
+            <span>Тип</span>
+            <strong>
+              {task.is_hot ? "Горячее" : "Обычное"}
+            </strong>
+          </div>
+
+          <div>
+            <span>Порядок</span>
+            <strong>{task.sort_order ?? "Не задан"}</strong>
+          </div>
+        </div>
+
+        {task.task_link && (
+          <a
+            href={task.task_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="adminTaskLink"
+          >
+            Открыть ссылку задания
+          </a>
+        )}
+
+        <div className="reviewButtons">
+          <div className="adminTaskOrderControls">
+            <button
+              type="button"
+              className="adminTaskOrderBtn"
+              title="Переместить выше"
+              onClick={() => moveTask(task, "up")}
+              disabled={saving}
+            >
+              ↑
+            </button>
+
+            <button
+              type="button"
+              className="adminTaskOrderBtn"
+              title="Переместить ниже"
+              onClick={() => moveTask(task, "down")}
+              disabled={saving}
+            >
+              ↓
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className="secondaryBtn"
+            onClick={() => startEdit(task)}
+            disabled={saving}
+          >
+            Редактировать
+          </button>
+
+          <button
+            type="button"
+            className="dangerBtn"
+            onClick={() => removeTask(task.id)}
+            disabled={saving}
+          >
+            Удалить
+          </button>
+        </div>
+      </div>
+    )}
+  </>
+)}
               </article>
             ))
           )}

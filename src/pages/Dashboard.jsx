@@ -273,6 +273,7 @@ const availableTasks = tasks.filter((task) => {
       ? "▲ Свернуть задание"
       : "▼ Открыть задание"}
   </button>
+ 
 
   {openedTasks[task.id] && (
     <div className="taskExpandedContent">
@@ -282,6 +283,15 @@ const availableTasks = tasks.filter((task) => {
           <p>{task.description}</p>
         </div>
       )}
+      {task.instruction && (
+  <div className="taskInstructionBlock">
+    <h4>Подробная инструкция</h4>
+
+    <div className="taskInstruction">
+      {task.instruction}
+    </div>
+  </div>
+)}
 
      
 

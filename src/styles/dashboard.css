@@ -1533,6 +1533,59 @@ box-shadow:0 10px 25px rgba(59,130,246,.35);
     font-size: 13px;
   }
 }
+.taskExpandedContent {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 6px;
+  animation: taskExpand 0.2s ease;
+}
+
+.taskFullDescription,
+.taskInstructionBlock {
+  padding: 17px;
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.taskFullDescription h4,
+.taskInstructionBlock h4 {
+  margin: 0 0 11px;
+  color: #9ccaff;
+  font-size: 14px;
+}
+
+.taskFullDescription p,
+.taskInstruction {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.65;
+  opacity: 0.86;
+}
+
+.taskCardV2.opened {
+  height: auto;
+  min-height: 285px;
+  max-height: none;
+  overflow: visible;
+}
+
+.taskCardV2.opened .taskDescriptionPreview {
+  display: none;
+}
+
+@keyframes taskExpand {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @media (max-width: 640px) {
   .userTaskCard.taskCardV2.collapsed {

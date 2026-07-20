@@ -1033,6 +1033,136 @@
     width: 100%;
   }
 }
+.adminTaskOrderControls {
+  display: flex;
+  gap: 8px;
+  margin-right: auto;
+}
+
+.adminTaskOrderBtn {
+  width: 42px;
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+
+  font-size: 20px;
+  font-weight: 900;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.adminTaskOrderBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(122, 184, 255, 0.45);
+}
+
+.adminTaskOrderBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.adminTaskCard {
+  align-self: start;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.adminCompactTaskHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.adminCompactTaskBadges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adminCompactTime {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.adminCompactReward {
+  flex-shrink: 0;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.adminCompactTaskMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.adminCompactTaskInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.adminCompactTaskInfo h3 {
+  margin: 0 0 8px;
+}
+
+.adminCompactDescription {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.adminTaskOpenBtn {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.adminTaskExpandedContent {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  animation: adminTaskOpen 0.2s ease;
+}
+
+@keyframes adminTaskOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 
 
