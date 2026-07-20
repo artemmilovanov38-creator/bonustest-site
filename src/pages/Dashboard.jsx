@@ -61,6 +61,7 @@ export default function Dashboard({
   );
 
   const [activeTab, setActiveTab] = useState("tasks");
+const [openedTasks, setOpenedTasks] = useState({});
 
 const approvedHistory = taskHistory.filter(
   (item) => item.status === "approved" || item.rewarded === true
@@ -102,7 +103,10 @@ const availableTasks = tasks.filter((task) => {
           {isAdmin && (
             <button
               className="secondaryBtn"
-              onClick={() => setIsAdminPanel(true)}
+              onClick={() => {
+  localStorage.setItem("isAdminPanel", "true");
+  setIsAdminPanel(true);
+}}
             >
               Админка
             </button>
@@ -215,79 +219,134 @@ const availableTasks = tasks.filter((task) => {
     </div>
   ) : (
     availableTasks.map((task) => (
-           <div className="userTaskCard taskCardV2" key={task.id}>
+        <div
+  className={`userTaskCard taskCardV2 ${
+    openedTasks[task.id] ? "opened" : "collapsed"
+  } ${task.is_hot ? "hotTaskCard" : ""}`}
+  key={task.id}
+>
   <div className="taskCardHead">
-    <span className="taskDifficulty">⭐ Простое</span>
-    <span className="taskRewardBox">+{task.reward} ₽</span>
+  <div className="taskBadges">
+    <span className="taskDifficulty">
+      {task.difficulty === "Сложное"
+        ? "🔴 Сложное"
+        : task.difficulty === "Среднее"
+        ? "🟡 Среднее"
+        : "🟢 Простое"}
+    </span>
+
+    <span className="taskTime">
+      ⏱ {task.estimated_time || "2 минуты"}
+    </span>
   </div>
+
+  <span className="taskRewardBox">
+    +{task.reward} ₽
+  </span>
+</div>
 
   <div className="taskTitleRow">
-    <div className="taskIcon">
-      {getTaskIcon(task.title)}
-    </div>
+    <div className={`taskIcon ${task.is_hot ? "hotTaskIcon" : ""}`}>
+  {task.is_hot ? "🔥" : getTaskIcon(task.title)}
+</div>
 
-    <div>
+    <div className="taskMainInfo">
       <h3>{task.title}</h3>
-      <p>{task.description}</p>
+
+      <p className="taskDescriptionPreview">
+        {task.description}
+      </p>
     </div>
   </div>
 
-  {task.task_link && (
-    <a
-      href={task.task_link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="taskStartBtn"
-    >
-      🚀 Выполнить задание
-    </a>
+  <button
+    type="button"
+    className="taskOpenBtn"
+    onClick={() =>
+      setOpenedTasks((prev) => ({
+        ...prev,
+        [task.id]: !prev[task.id],
+      }))
+    }
+  >
+    {openedTasks[task.id]
+      ? "▲ Свернуть задание"
+      : "▼ Открыть задание"}
+  </button>
+
+  {openedTasks[task.id] && (
+    <div className="taskExpandedContent">
+      {task.description && (
+        <div className="taskFullDescription">
+          <h4>Описание</h4>
+          <p>{task.description}</p>
+        </div>
+      )}
+
+     
+
+      {task.task_link && (
+        <a
+          href={task.task_link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="taskStartBtn"
+        >
+          🚀 Выполнить задание
+        </a>
+      )}
+
+      <div className="taskUploadBlock">
+        <span>📎 Скриншот выполнения</span>
+
+        {!completedTasks.includes(task.id) && (
+          <label
+            className={`fileUploadV2 ${
+              proofFiles[task.id] ? "hasFile" : ""
+            }`}
+          >
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setProofFiles({
+                  ...proofFiles,
+                  [task.id]: e.target.files[0],
+                })
+              }
+            />
+
+            {proofFiles[task.id]
+              ? `✅ ${proofFiles[task.id].name}`
+              : "Прикрепить файл"}
+          </label>
+        )}
+      </div>
+
+      {(() => {
+        const taskStatus = taskHistory.find(
+          (item) => item.task_id === task.id
+        )?.status;
+
+        return (
+          <button
+            className="primaryBtn taskSubmitBtn"
+            disabled={
+              taskStatus === "pending" ||
+              taskStatus === "approved"
+            }
+            onClick={() => completeTask(task)}
+          >
+            {taskStatus === "pending"
+              ? "🟡 На проверке"
+              : taskStatus === "approved"
+              ? "✅ Выполнено"
+              : "Отправить на проверку"}
+          </button>
+        );
+      })()}
+    </div>
   )}
-
-  <div className="taskUploadBlock">
-    <span>📎 Скриншот выполнения</span>
-
-    {!completedTasks.includes(task.id) && (
-      <label className={`fileUploadV2 ${proofFiles[task.id] ? "hasFile" : ""}`}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            setProofFiles({
-              ...proofFiles,
-              [task.id]: e.target.files[0],
-            })
-          }
-        />
-
-        {proofFiles[task.id]
-          ? `✅ ${proofFiles[task.id].name}`
-          : "Прикрепить файл"}
-      </label>
-    )}
-  </div>
-
-  {(() => {
-    const taskStatus = taskHistory.find(
-      (item) => item.task_id === task.id
-    )?.status;
-
-    return (
-      <button
-        className="primaryBtn taskSubmitBtn"
-        disabled={
-          taskStatus === "pending" ||
-          taskStatus === "approved"
-        }
-        onClick={() => completeTask(task)}
-      >
-        {taskStatus === "pending"
-          ? "🟡 На проверке"
-          : taskStatus === "approved"
-          ? "✅ Выполнено"
-          : "Отправить на проверку"}
-      </button>
-    );
-  })()}
 </div>
           ))
 )}

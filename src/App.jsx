@@ -15,10 +15,13 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [balance, setBalance] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminRole, setAdminRole] = useState(null);
-  const [isAdminPanel, setIsAdminPanel] = useState(false);
+  const [isAdminPanel, setIsAdminPanel] = useState(() => {
+  return localStorage.getItem("isAdminPanel") === "true";
+});
 
   const [siteStats, setSiteStats] = useState({
     users: 0,
@@ -38,69 +41,128 @@ export default function App() {
   const [withdrawWallet, setWithdrawWallet] = useState("");
   const [withdrawHistory, setWithdrawHistory] = useState([]);
 
-  useEffect(() => {
-    checkUser();
-    loadSiteStats();
-    loadSiteSettings();
-  }, []);
+ useEffect(() => {
+  let mounted = true;
 
-  
+  async function initializeApp() {
+    try {
+      await Promise.all([
+        loadSiteStats(),
+        loadSiteSettings(),
+        loadTasks(),
+      ]);
 
-  async function checkUser() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
-    if (!session?.user) {
-      loadTasks();
+      if (error) {
+        console.error("Ошибка получения сессии:", error);
+      }
+
+      if (!mounted) return;
+
+      if (session?.user) {
+        await loadCurrentUser(session.user);
+      } else {
+        clearUserState();
+      }
+    } catch (error) {
+      console.error("Ошибка запуска приложения:", error);
+      clearUserState();
+    } finally {
+      if (mounted) {
+        setAuthReady(true);
+      }
+    }
+  }
+
+  initializeApp();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+    if (!mounted) return;
+
+    if (event === "SIGNED_OUT" || !session?.user) {
+      clearUserState();
+      setAuthReady(true);
       return;
     }
 
-    checkIsAdmin(session.user.email);
-
-    const { data: dbUser } = await supabase
-      .from("users")
-      .select("*")
-      .eq("auth_id", session.user.id)
-     .maybeSingle();
-
-    if (dbUser) {
-      if (dbUser.is_blocked) {
-        alert("Ваш аккаунт заблокирован");
-        
-        await supabase.auth.signOut();
-        setUser(null);
-        return;
-        setUser({
-  ...session.user,
-  name: dbUser.name || "",
-});
-      }
-
-      setBalance(dbUser.balance);
+    if (event === "SIGNED_IN") {
+      setTimeout(async () => {
+        try {
+          await loadCurrentUser(session.user);
+        } catch (error) {
+          console.error("Ошибка восстановления пользователя:", error);
+        } finally {
+          if (mounted) {
+            setAuthReady(true);
+          }
+        }
+      }, 0);
     }
+  });
 
-   const { data: completed } = await supabase
-  .from("user_tasks")
-  .select("task_id, status")
-  .eq("user_id", session.user.id);
+  return () => {
+    mounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
 
-if (completed) {
-  setCompletedTasks(
-    completed
-      .filter(
-        (item) =>
-          item.status === "pending" ||
-          item.status === "approved"
-      )
-      .map((item) => item.task_id)
-  );
+  
+
+  function clearUserState() {
+  setUser(null);
+  setBalance(0);
+  setCompletedTasks([]);
+  setTaskHistory([]);
+  setWithdrawHistory([]);
+  setIsAdmin(false);
+  setAdminRole(null);
+  setIsAdminPanel(false);
+  localStorage.removeItem("isAdminPanel");
 }
 
-    loadTasks();
-    loadTaskHistory(session.user.id);
-    loadWithdrawHistory(session.user.id);
+async function loadCurrentUser(authUser) {
+  if (!authUser?.id) {
+    clearUserState();
+    return;
   }
+
+  const { data: dbUser, error: userError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("auth_id", authUser.id)
+    .maybeSingle();
+
+  if (userError) {
+    console.error("Ошибка загрузки пользователя:", userError);
+    throw userError;
+  }
+
+  if (dbUser?.is_blocked) {
+    toast.error("Ваш аккаунт заблокирован");
+    await supabase.auth.signOut();
+    clearUserState();
+    return;
+  }
+
+  setUser({
+    ...authUser,
+    name: dbUser?.name || "",
+  });
+
+  setBalance(Number(dbUser?.balance || 0));
+
+  await Promise.all([
+    checkIsAdmin(authUser.email),
+    loadTaskHistory(authUser.id),
+    loadWithdrawHistory(authUser.id),
+  ]);
+}
 
   async function checkIsAdmin(email) {
   const { data, error } = await supabase
@@ -120,15 +182,16 @@ if (completed) {
 }
 
   async function loadTasks() {
-    const { data, error } = await supabase
-      .from("tasks")
-      .select("*")
-      .order("id");
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .order("is_hot", { ascending: false })
+    .order("id", { ascending: true });
 
-    if (!error) {
-      setTasks(data || []);
-    }
+  if (!error) {
+    setTasks(data || []);
   }
+}
 
   async function loadSiteStats() {
     const { data: users } = await supabase.from("users").select("id");
@@ -463,16 +526,32 @@ if (completed) {
 }
 
   async function signOutUser() {
-    await supabase.auth.signOut();
-    setUser(null);
-    setIsAdminPanel(false);
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    toast.error(error.message);
+    return;
   }
 
+  clearUserState();
+}
+if (!authReady) {
+  return (
+    <div className="appLoadingScreen">
+      <div className="appLoadingSpinner" />
+      <p>Загрузка...</p>
+    </div>
+  );
+}
   if (user && isAdminPanel) {
     return (
   <Admin
     role={adminRole}
-    onExit={() => setIsAdminPanel(false)}
+    onExit={() => {
+  localStorage.removeItem("isAdminPanel");
+  setIsAdminPanel(false);
+  
+}}
   />
 );
   }

@@ -102,6 +102,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 18px;
+  align-items: start;
 }
 
 .userTaskCard,
@@ -116,6 +117,8 @@
   border-radius: 24px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-self: start;
   gap: 18px;
 }
 
@@ -476,12 +479,23 @@ box-shadow:0 20px 40px rgba(0,0,0,.25);
 }
 
 .taskRewardBox{
-background:linear-gradient(135deg,#22c55e,#16a34a);
-color:white;
-padding:8px 14px;
-border-radius:999px;
-font-size:14px;
-font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white;
+
+  padding:8px 16px;
+
+  border-radius:999px;
+
+  font-size:14px;
+  font-weight:800;
+
+  white-space:nowrap;
+  flex-shrink:0;
+  min-width:max-content;
 }
 
 .taskTag{
@@ -857,11 +871,18 @@ box-shadow:0 10px 25px rgba(59,130,246,.35);
   gap: 20px;
 }
 
-.taskCardHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+.taskCardHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+}
+.taskRight{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+    flex-shrink:0;
 }
 
 .taskDifficulty {
@@ -954,6 +975,64 @@ box-shadow:0 10px 25px rgba(59,130,246,.35);
   margin: 7px 0 0;
   color: rgba(255,255,255,.55);
   font-size: 14px;
+}
+.taskInstructionBlock{
+    margin-top:14px;
+}
+
+.taskInstruction{
+    white-space:pre-wrap;
+    line-height:1.6;
+    transition:.3s;
+}
+
+.taskInstruction.collapsed{
+    max-height:72px;
+    overflow:hidden;
+    position:relative;
+}
+
+.taskInstruction.collapsed::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:35px;
+    background:linear-gradient(transparent,#181c23);
+}
+
+.instructionBtn{
+    margin-top:10px;
+    background:none;
+    border:none;
+    color:#7db8ff;
+    cursor:pointer;
+    font-weight:700;
+}
+.taskBadges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    flex:1;
+}
+
+
+.taskTime {
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.taskHot{
+    padding:6px 12px;
+    border-radius:999px;
+    background:rgba(255,120,0,.18);
+    color:#ffb347;
+    font-size:12px;
+    font-weight:800;
 }
 
 
@@ -1051,5 +1130,417 @@ box-shadow:0 10px 25px rgba(59,130,246,.35);
     max-width: 100%;
     padding: 24px;
     border-radius: 24px;
+  }
+}
+/* Компактная сетка заданий */
+
+.taskGrid {
+  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.userTaskCard.taskCardV2 {
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  padding: 20px;
+  gap: 16px;
+  align-self: start;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.userTaskCard.taskCardV2.collapsed {
+  min-height: 250px;
+  max-height: 250px;
+}
+
+.userTaskCard.taskCardV2.opened {
+  max-height: none;
+}
+
+.taskCardHead {
+  align-items: flex-start;
+}
+
+.taskMainInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.taskTitleRow {
+  min-height: 82px;
+}
+
+.taskTitleRow h3 {
+  margin: 0 0 8px;
+}
+
+.taskDescriptionPreview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.5;
+  min-height: 48px;
+}
+
+.taskCardV2.opened .taskDescriptionPreview {
+  display: none;
+}
+
+.taskOpenBtn {
+  width: 100%;
+  margin-top: auto;
+  padding: 13px 16px;
+  border: 1px solid rgba(122, 184, 255, 0.25);
+  border-radius: 15px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #8bc4ff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.taskOpenBtn:hover {
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(122, 184, 255, 0.5);
+}
+
+.taskExpandedContent {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+.taskFullDescription,
+.taskInstructionBlock {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.taskFullDescription h4,
+.taskInstructionBlock h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #9ccaff;
+}
+
+.taskFullDescription p {
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.82;
+  white-space: pre-wrap;
+}
+
+.taskInstruction {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  line-height: 1.65;
+  opacity: 0.88;
+}
+
+.taskInstruction::after {
+  display: none;
+}
+
+.taskRewardBox{
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+
+    color:white;
+
+    font-weight:900;
+
+    white-space:nowrap;
+
+    min-width:max-content;
+}
+/* =========================================
+   ОБНОВЛЁННЫЕ КАРТОЧКИ ЗАДАНИЙ
+========================================= */
+
+.taskGrid {
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+.userTaskCard.taskCardV2 {
+  position: relative;
+  width: 100%;
+  min-height: 285px;
+  padding: 22px;
+  gap: 18px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(59, 130, 246, 0.12),
+      transparent 42%
+    ),
+    rgba(255, 255, 255, 0.055);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.userTaskCard.taskCardV2:hover {
+  transform: translateY(-4px);
+  border-color: rgba(122, 184, 255, 0.32);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+}
+
+/* Закрытая карточка */
+
+.userTaskCard.taskCardV2.collapsed {
+  height: 285px;
+  min-height: 285px;
+  max-height: 285px;
+}
+
+/* Открытая карточка */
+
+.userTaskCard.taskCardV2.opened {
+  height: auto;
+  max-height: none;
+}
+
+/* Верх карточки */
+
+.taskCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.taskBadges {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.taskRewardBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+  min-width: max-content;
+
+  padding: 10px 17px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+/* Название и описание */
+
+.taskTitleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 90px;
+}
+
+.taskMainInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.taskDescriptionPreview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  overflow: hidden;
+  min-height: 48px;
+
+  line-height: 1.5;
+}
+
+/* Иконка обычного задания */
+
+.taskIcon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+
+  font-size: 23px;
+}
+
+/* Иконка горячего задания */
+
+.taskIcon.hotTaskIcon {
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.2),
+    rgba(234, 88, 12, 0.1)
+  );
+
+  border: 1px solid rgba(251, 146, 60, 0.22);
+
+  box-shadow:
+    0 8px 24px rgba(234, 88, 12, 0.13),
+    inset 0 0 18px rgba(249, 115, 22, 0.08);
+}
+
+/* Кнопка всегда внизу */
+
+.taskOpenBtn {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   ГОРЯЧАЯ КАРТОЧКА
+========================================= */
+
+.userTaskCard.taskCardV2.hotTaskCard {
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(249, 115, 22, 0.18),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 15% 90%,
+      rgba(234, 88, 12, 0.2),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(22, 28, 43, 0.98) 0%,
+      rgba(31, 28, 34, 0.98) 55%,
+      rgba(56, 31, 24, 0.98) 100%
+    );
+
+  border-color: rgba(249, 115, 22, 0.38);
+
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.28),
+    inset 0 -1px 0 rgba(249, 115, 22, 0.18);
+}
+
+.userTaskCard.taskCardV2.hotTaskCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  pointer-events: none;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    180deg,
+    transparent 48%,
+    rgba(249, 115, 22, 0.07) 100%
+  );
+}
+
+.userTaskCard.taskCardV2.hotTaskCard > * {
+  position: relative;
+  z-index: 1;
+}
+
+.userTaskCard.taskCardV2.hotTaskCard:hover {
+  border-color: rgba(251, 146, 60, 0.7);
+
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.34),
+    0 0 28px rgba(249, 115, 22, 0.12),
+    inset 0 -1px 0 rgba(251, 146, 60, 0.26);
+}
+
+.userTaskCard.taskCardV2.hotTaskCard .taskOpenBtn {
+  border-color: rgba(249, 115, 22, 0.38);
+
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.96),
+    rgba(67, 38, 31, 0.88)
+  );
+
+  color: #fdba74;
+}
+
+.userTaskCard.taskCardV2.hotTaskCard .taskOpenBtn:hover {
+  border-color: rgba(251, 146, 60, 0.7);
+  background: rgba(249, 115, 22, 0.14);
+}
+
+/* Мобильная версия */
+
+@media (max-width: 640px) {
+  .taskGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .userTaskCard.taskCardV2 {
+    min-height: 275px;
+    padding: 20px;
+  }
+
+  .userTaskCard.taskCardV2.collapsed {
+    height: 275px;
+    min-height: 275px;
+    max-height: 275px;
+  }
+
+  .taskBadges {
+    flex-wrap: wrap;
+  }
+
+  .taskRewardBox {
+    padding: 9px 13px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .userTaskCard.taskCardV2.collapsed {
+    min-height: 240px;
+    max-height: 240px;
+  }
+
+  .taskGrid {
+    grid-template-columns: 1fr;
   }
 }
