@@ -1,6 +1,11 @@
+
+
 export default function Home({ siteSettings, siteStats, setShowAuth }) {
+
+
   const siteName = siteSettings.site_name || "BONUSTEST";
   const support = (siteSettings.support_telegram || "").replace("@", "");
+  
 
   return (
     <div className="site v2Home">
@@ -174,13 +179,26 @@ export default function Home({ siteSettings, siteStats, setShowAuth }) {
         <div className="footerLogo">{siteName}</div>
 
         <div className="footerLinks">
-          <a href="#">Пользовательское соглашение</a>
-          <a href="#">Политика конфиденциальности</a>
-          <a href="#">Поддержка</a>
-        </div>
+  <a href="/agreement">
+    Пользовательское соглашение
+  </a>
+
+  <a href="/privacy">
+    Политика конфиденциальности
+  </a>
+
+  <a
+    href={support ? `https://t.me/${support}` : "#"}
+    target={support ? "_blank" : undefined}
+    rel={support ? "noopener noreferrer" : undefined}
+  >
+    Поддержка
+  </a>
+</div>
 
         <div className="footerCopy">© 2026 {siteName}</div>
       </footer>
+      
     </div>
   );
 }

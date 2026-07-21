@@ -3,6 +3,8 @@ import { supabase } from "./lib/supabase";
 
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import Agreement from "./pages/Agreement";
+import Privacy from "./pages/Privacy";
 import Admin from "./admin/Admin";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -12,6 +14,7 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [user, setUser] = useState(null);
@@ -440,6 +443,12 @@ async function loadCurrentUser(authUser) {
   toast.error("Введите имя, email и пароль");
   return;
 }
+if (!legalAccepted) {
+  toast.error(
+    "Подтвердите согласие с Пользовательским соглашением и Политикой конфиденциальности"
+  );
+  return;
+}
 
     try {
       setLoading(true);
@@ -469,7 +478,8 @@ async function loadCurrentUser(authUser) {
 
       alert("Аккаунт создан. Теперь можно войти.");
       setName("");
-      setAuthMode("signin");
+setLegalAccepted(false);
+setAuthMode("signin");
     } finally {
       setLoading(false);
     }
@@ -540,6 +550,24 @@ async function loadCurrentUser(authUser) {
   }
 
   clearUserState();
+}
+
+const currentPath =
+  window.location.pathname.replace(/\/+$/, "") || "/";
+
+const legalSiteName =
+  siteSettings.site_name || "BONUSTEST";
+
+if (currentPath === "/agreement") {
+  return (
+    <Agreement siteName={legalSiteName} />
+  );
+}
+
+if (currentPath === "/privacy") {
+  return (
+    <Privacy siteName={legalSiteName} />
+  );
 }
 if (!authReady) {
   return (
@@ -612,39 +640,115 @@ if (!authReady) {
               ×
             </button>
 
-            <h2>{authMode === "signup" ? "Регистрация" : "Вход"}</h2>
+           <div className="authHeading">
+  <span className="authEyebrow">
+    {authMode === "signup"
+      ? "Создание аккаунта"
+      : "Личный кабинет"}
+  </span>
 
+  <h2>
+    {authMode === "signup"
+      ? "Регистрация"
+      : "Вход"}
+  </h2>
+
+  <p>
+    {authMode === "signup"
+      ? "Заполните данные, чтобы начать выполнять задания."
+      : "Введите данные для входа в аккаунт."}
+  </p>
+</div>
+
+            <div className="authFields">
+  {authMode === "signup" && (
+    <label className="authField">
+      <span>Ваше имя</span>
+
+      <input
+        className="authInput"
+        type="text"
+        placeholder="Например, Артём"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        autoComplete="name"
+      />
+    </label>
+  )}
+
+  <label className="authField">
+    <span>Email</span>
+
+    <input
+      className="authInput"
+      type="email"
+      placeholder="example@mail.ru"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      autoComplete="email"
+    />
+  </label>
+
+  <label className="authField">
+    <span>Пароль</span>
+
+    <input
+      className="authInput"
+      type="password"
+      placeholder="Минимум 6 символов"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      autoComplete={
+        authMode === "signup"
+          ? "new-password"
+          : "current-password"
+      }
+    />
+  </label>
+</div>
             {authMode === "signup" && (
-  <input
-    className="authInput"
-    type="text"
-    placeholder="Ваше имя"
-    value={name}
-    onChange={(e) => setName(e.target.value)}
-  />
+  <label className="legalAcceptCheck">
+    <input
+      type="checkbox"
+      checked={legalAccepted}
+      onChange={(event) =>
+        setLegalAccepted(event.target.checked)
+      }
+    />
+
+    <span className="legalAcceptCustom" />
+
+    <span className="legalAcceptText">
+      Я принимаю{" "}
+      <a
+        href="/agreement"
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => event.stopPropagation()}
+      >
+        Пользовательское соглашение
+      </a>{" "}
+      и{" "}
+      <a
+        href="/privacy"
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => event.stopPropagation()}
+      >
+        Политику конфиденциальности
+      </a>
+    </span>
+  </label>
 )}
 
-            <input
-              className="authInput"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <input
-              className="authInput"
-              type="password"
-              placeholder="Пароль"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
             <button
-              className="primaryBtn authSubmit"
-              onClick={authMode === "signup" ? handleSignUp : handleSignIn}
-              disabled={loading}
-            >
+  className="primaryBtn authSubmit"
+  onClick={authMode === "signup" ? handleSignUp : handleSignIn}
+  disabled={
+    loading ||
+    (authMode === "signup" && !legalAccepted)
+  }
+>
               {loading
                 ? "Загрузка..."
                 : authMode === "signup"
@@ -653,11 +757,15 @@ if (!authReady) {
             </button>
 
             <button
-              className="switchAuth"
-              onClick={() =>
-                setAuthMode(authMode === "signup" ? "signin" : "signup")
-              }
-            >
+  className="switchAuth"
+  onClick={() => {
+    setAuthMode(
+      authMode === "signup" ? "signin" : "signup"
+    );
+
+    setLegalAccepted(false);
+  }}
+>
               {authMode === "signup"
                 ? "Уже есть аккаунт? Войти"
                 : "Нет аккаунта? Зарегистрироваться"}
