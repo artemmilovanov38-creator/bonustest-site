@@ -16,6 +16,8 @@ export default function App() {
   const [name, setName] = useState("");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
 
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
@@ -113,7 +115,19 @@ export default function App() {
     mounted = false;
     subscription.unsubscribe();
   };
-}, []);
+},
+ []);
+ useEffect(() => {
+  if (resendTimer <= 0) return;
+
+  const timer = setInterval(() => {
+    setResendTimer((prev) => prev - 1);
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [resendTimer]);
+
+
 
   
 
@@ -364,9 +378,14 @@ async function loadCurrentUser(authUser) {
   }
 
   if (error) {
-    toast.error(error.message);
-    return;
-  }
+  console.error("Ошибка отправки задания:", error);
+
+  toast.error(
+    "Не удалось отправить задание на проверку. Попробуйте ещё раз."
+  );
+
+  return;
+}
 
   setCompletedTasks([...completedTasks, task.id]);
 
@@ -410,9 +429,14 @@ async function loadCurrentUser(authUser) {
     });
 
     if (error) {
-      alert(error.message);
-      return;
-    }
+  console.error("Ошибка создания заявки на вывод:", error);
+
+  toast.error(
+    "Не удалось создать заявку на вывод. Попробуйте ещё раз."
+  );
+
+  return;
+}
 
     const newBalance = Number(balance) - Number(withdrawAmount);
 
@@ -424,9 +448,14 @@ async function loadCurrentUser(authUser) {
       .eq("auth_id", user.id);
 
     if (balanceError) {
-      alert(balanceError.message);
-      return;
-    }
+  console.error("Ошибка обновления баланса:", balanceError);
+
+  toast.error(
+    "Заявка создана, но не удалось обновить баланс. Обратитесь в поддержку."
+  );
+
+  return;
+}
 
     setBalance(newBalance);
     setWithdrawAmount("");
@@ -438,71 +467,211 @@ async function loadCurrentUser(authUser) {
     toast.success("Заявка отправлена");
   }
 
-  async function handleSignUp() {
-    if (!name.trim() || !email || !password) {
-  toast.error("Введите имя, email и пароль");
-  return;
-}
-if (!legalAccepted) {
-  toast.error(
-    "Подтвердите согласие с Пользовательским соглашением и Политикой конфиденциальности"
-  );
-  return;
-}
+  function getAuthErrorMessage(error) {
+  const message = String(error?.message || "").toLowerCase();
 
-    try {
-      setLoading(true);
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      if (data?.user) {
-        const { error: insertError } = await supabase.from("users").insert({
-  auth_id: data.user.id,
-  email: data.user.email,
-  name: name.trim(),
-  balance: 0,
-});
-
-        if (insertError) {
-          alert(insertError.message);
-        }
-      }
-
-      alert("Аккаунт создан. Теперь можно войти.");
-      setName("");
-setLegalAccepted(false);
-setAuthMode("signin");
-    } finally {
-      setLoading(false);
-    }
+  if (message.includes("email not confirmed")) {
+    return "Сначала подтвердите Email. Мы отправили письмо на вашу почту. Также проверьте папку «Спам».";
   }
 
-  async function handleSignIn() {
-  if (!email || !password) {
-    toast.error("Введите email и пароль");
+  if (message.includes("email rate limit exceeded")) {
+    return "Слишком много писем было отправлено за короткое время. Подождите несколько минут и попробуйте снова.";
+  }
+
+  if (message.includes("invalid login credentials")) {
+    return "Неверный Email или пароль.";
+  }
+
+  if (message.includes("user already registered")) {
+    return "Пользователь с таким Email уже зарегистрирован.";
+  }
+
+  if (
+    message.includes("password should be at least") ||
+    message.includes("password must be at least")
+  ) {
+    return "Пароль должен содержать минимум 6 символов.";
+  }
+
+  if (message.includes("invalid email")) {
+    return "Введите корректный адрес электронной почты.";
+  }
+
+  if (message.includes("signup is disabled")) {
+    return "Регистрация временно недоступна.";
+  }
+
+  if (
+    message.includes("load failed") ||
+    message.includes("failed to fetch") ||
+    message.includes("network")
+  ) {
+    return "Не удалось связаться с сервером. Проверьте интернет и попробуйте ещё раз.";
+  }
+
+  if (
+    message.includes("request rate limit reached") ||
+    message.includes("rate limit")
+  ) {
+    return "Слишком много попыток. Подождите несколько минут и повторите.";
+  }
+
+  return "Произошла ошибка. Попробуйте ещё раз.";
+}
+  async function handleSignUp() {
+  if (!name.trim() || !email.trim() || !password) {
+    toast.error("Введите имя, Email и пароль.");
+    return;
+  }
+
+  if (!legalAccepted) {
+    toast.error(
+      "Подтвердите согласие с Пользовательским соглашением и Политикой конфиденциальности."
+    );
     return;
   }
 
   try {
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
       password,
+      options: {
+        data: {
+          name: name.trim(),
+        },
+      },
     });
 
     if (error) {
-      toast.error(error.message);
+      toast.error(getAuthErrorMessage(error));
       return;
     }
+
+    if (!data?.user) {
+  toast.error(
+    "Не удалось создать аккаунт. Проверьте введённые данные и попробуйте ещё раз."
+  );
+  return;
+}
+
+const { error: insertError } = await supabase
+  .from("users")
+  .insert({
+    auth_id: data.user.id,
+    email: data.user.email,
+    name: name.trim(),
+    balance: 0,
+  });
+
+if (insertError && insertError.code !== "23505") {
+  console.error("Ошибка сохранения профиля:", insertError);
+
+  toast.error(
+    "Аккаунт создан, но не удалось сохранить профиль. Обратитесь в поддержку."
+  );
+
+  return;
+}
+
+toast.success(
+  "Аккаунт создан. Мы отправили письмо для подтверждения Email. Откройте письмо, подтвердите адрес и затем войдите."
+);
+setShowAuth(false);
+
+    setName("");
+    setEmail("");
+    setPassword("");
+    setLegalAccepted(false);
+    setAuthMode("signin");
+  } catch (error) {
+    toast.error(getAuthErrorMessage(error));
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function resendConfirmationEmail() {
+  const normalizedEmail = email.trim();
+if (resendTimer > 0) {
+  toast.error(
+    `Повторная отправка будет доступна через ${resendTimer} сек.`
+  );
+  return;
+}
+  if (!normalizedEmail) {
+    toast.error(
+      "Введите Email, на который нужно повторно отправить письмо."
+    );
+    return;
+  }
+
+  try {
+    setResendingEmail(true);
+
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: normalizedEmail,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+      },
+    });
+
+    if (error) {
+      console.error(
+        "Ошибка повторной отправки письма:",
+        error
+      );
+
+      toast.error(getAuthErrorMessage(error));
+      return;
+    }
+
+    toast.success(
+      `Письмо повторно отправлено на ${normalizedEmail}. Проверьте входящие сообщения и папку «Спам».`
+    );
+    setResendTimer(60);
+  } catch (error) {
+    console.error(
+      "Ошибка повторной отправки письма:",
+      error
+    );
+
+    toast.error(getAuthErrorMessage(error));
+  } finally {
+    setResendingEmail(false);
+  }
+}
+ 
+ async function handleSignIn() {
+  if (!email.trim() || !password) {
+    toast.error("Введите Email и пароль.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        
+        email: email.trim(),
+        password,
+      });
+       if (error) {
+  console.error("Ошибка входа:", error);
+
+  toast.error(getAuthErrorMessage(error));
+
+  return;
+}
+      if (!data?.user) {
+  toast.error(
+    "Не удалось получить данные аккаунта."
+  );
+  return;
+}
 
     const { data: dbUser, error: userError } = await supabase
       .from("users")
@@ -511,12 +680,14 @@ setAuthMode("signin");
       .maybeSingle();
 
     if (userError) {
-      toast.error(userError.message);
+      toast.error(
+        "Не удалось загрузить профиль. Попробуйте войти ещё раз."
+      );
       return;
     }
 
     if (dbUser?.is_blocked) {
-      toast.error("Ваш аккаунт заблокирован");
+      toast.error("Ваш аккаунт заблокирован.");
       await supabase.auth.signOut();
       return;
     }
@@ -526,16 +697,22 @@ setAuthMode("signin");
       name: dbUser?.name || "",
     });
 
-    setBalance(dbUser?.balance || 0);
+    setBalance(Number(dbUser?.balance || 0));
 
-    await checkIsAdmin(data.user.email);
-    await loadTaskHistory(data.user.id);
-    await loadWithdrawHistory(data.user.id);
-    await loadTasks();
+    await Promise.all([
+      checkIsAdmin(data.user.email),
+      loadTaskHistory(data.user.id),
+      loadWithdrawHistory(data.user.id),
+      loadTasks(),
+    ]);
 
     setShowAuth(false);
     setEmail("");
     setPassword("");
+
+    toast.success("Вы успешно вошли в аккаунт.");
+  } catch (error) {
+    toast.error(getAuthErrorMessage(error));
   } finally {
     setLoading(false);
   }
@@ -545,7 +722,7 @@ setAuthMode("signin");
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    toast.error(error.message);
+    toast.error(getAuthErrorMessage(error));
     return;
   }
 
@@ -636,9 +813,16 @@ if (!authReady) {
       {showAuth && (
         <div className="modal">
           <div className="authBox">
-            <button className="close" onClick={() => setShowAuth(false)}>
-              ×
-            </button>
+            <button
+  className="close"
+  onClick={() => {
+    setShowAuth(false);
+    setPassword("");
+    setLegalAccepted(false);
+  }}
+>
+  ×
+</button>
 
            <div className="authHeading">
   <span className="authEyebrow">
@@ -706,6 +890,30 @@ if (!authReady) {
     />
   </label>
 </div>
+{authMode === "signin" && (
+  <div className="authEmailHelp">
+    <span>Не пришло письмо с подтверждением?</span>
+
+    <button
+      type="button"
+      className="resendEmailBtn"
+      onClick={resendConfirmationEmail}
+      disabled={
+  resendingEmail ||
+  loading ||
+  resendTimer > 0
+}
+    >
+      {
+  resendingEmail
+    ? "Отправляем..."
+    : resendTimer > 0
+      ? `Повторно через ${resendTimer} сек`
+      : "Отправить письмо ещё раз"
+}
+    </button>
+  </div>
+)}
             {authMode === "signup" && (
   <label className="legalAcceptCheck">
     <input
@@ -750,10 +958,12 @@ if (!authReady) {
   }
 >
               {loading
-                ? "Загрузка..."
-                : authMode === "signup"
-                  ? "Создать аккаунт"
-                  : "Войти"}
+  ? authMode === "signup"
+    ? "Создаём аккаунт..."
+    : "Выполняется вход..."
+  : authMode === "signup"
+    ? "Создать аккаунт"
+    : "Войти"}
             </button>
 
             <button
