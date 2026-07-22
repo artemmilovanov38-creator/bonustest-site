@@ -1261,3 +1261,75 @@ overflow: hidden;
 
 }
 }
+/* Блок повторной отправки письма */
+
+.authEmailHelp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  width: 100%;
+  margin: 4px 0 18px;
+  padding: 13px 14px;
+
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(14, 165, 233, 0.08),
+    rgba(124, 58, 237, 0.06)
+  );
+
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.resendEmailBtn {
+  flex-shrink: 0;
+
+  padding: 7px 10px;
+
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: 9px;
+
+  background: rgba(56, 189, 248, 0.08);
+  color: #7dd3fc;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.resendEmailBtn:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(125, 211, 252, 0.45);
+  color: #ffffff;
+}
+
+.resendEmailBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .authEmailHelp {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .resendEmailBtn {
+    width: 100%;
+  }
+}
