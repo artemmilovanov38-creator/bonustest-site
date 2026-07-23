@@ -229,3 +229,56 @@ export async function deleteUserCompletely(user) {
     .delete()
     .eq("email", user.email);
 }
+export async function createUserByAdmin(surname) {
+  const cleanSurname =
+    String(surname || "").trim();
+
+  if (cleanSurname.length < 2) {
+    return {
+      data: null,
+      error: new Error(
+        "Введите фамилию пользователя"
+      ),
+    };
+  }
+
+  const { data, error } =
+    await supabase.functions.invoke(
+      "admin-create-user",
+      {
+        body: {
+          surname: cleanSurname,
+        },
+      }
+    );
+
+  if (error) {
+    console.error(
+      "Ошибка Edge Function:",
+      error
+    );
+
+    return {
+      data: null,
+      error: new Error(
+        error.message ||
+          "Не удалось вызвать серверную функцию"
+      ),
+    };
+  }
+
+  if (!data?.success) {
+    return {
+      data: null,
+      error: new Error(
+        data?.error ||
+          "Не удалось создать пользователя"
+      ),
+    };
+  }
+
+  return {
+    data: data.user,
+    error: null,
+  };
+}

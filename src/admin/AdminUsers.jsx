@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
+  createUserByAdmin,
   deleteUserCompletely,
   makeAdmin,
   makeCreator,
@@ -18,6 +20,14 @@ export default function AdminUsers({ admin }) {
 
   const [adminRoles, setAdminRoles] = useState({});
   const [actionLoading, setActionLoading] = useState(false);
+  const [newUserSurname, setNewUserSurname] =
+  useState("");
+
+const [creatingUser, setCreatingUser] =
+  useState(false);
+
+const [createdCredentials, setCreatedCredentials] =
+  useState(null);
 
   async function loadAdminRoles() {
     const { data, error } = await supabase
@@ -38,6 +48,74 @@ export default function AdminUsers({ admin }) {
 
     setAdminRoles(roles);
   }
+  async function copyCredentials() {
+  if (!createdCredentials) {
+    return;
+  }
+
+  const credentialsText = [
+    `Фамилия: ${createdCredentials.surname}`,
+    `Логин: ${createdCredentials.login}`,
+    `Пароль: ${createdCredentials.password}`,
+  ].join("\n");
+
+  try {
+    await navigator.clipboard.writeText(
+      credentialsText
+    );
+
+    alert("Логин и пароль скопированы");
+  } catch (error) {
+    console.error(
+      "Ошибка копирования:",
+      error
+    );
+
+    alert(
+      "Не удалось скопировать данные. Скопируйте их вручную."
+    );
+  }
+}
+  async function handleCreateUser() {
+  const surname = newUserSurname.trim();
+
+  if (surname.length < 2) {
+    alert("Введите фамилию пользователя");
+    return;
+  }
+
+  try {
+    setCreatingUser(true);
+    setCreatedCredentials(null);
+
+    const { data, error } =
+      await createUserByAdmin(surname);
+
+    if (error) {
+      alert(
+        error.message ||
+          "Не удалось создать пользователя"
+      );
+      return;
+    }
+
+    setCreatedCredentials(data);
+    setNewUserSurname("");
+
+    if (admin?.reload) {
+      await admin.reload();
+    }
+  } catch (error) {
+    console.error(
+      "Ошибка создания пользователя:",
+      error
+    );
+
+    alert("Не удалось создать пользователя");
+  } finally {
+    setCreatingUser(false);
+  }
+}
 
   useEffect(() => {
     loadAdminRoles();
@@ -189,12 +267,175 @@ export default function AdminUsers({ admin }) {
   }
 
   if (admin.loading) {
+    async function handleCreateUser() {
+  const surname = newUserSurname.trim();
+
+  if (surname.length < 2) {
+    alert("Введите фамилию пользователя");
+    return;
+  }
+
+  try {
+    setCreatingUser(true);
+    setCreatedCredentials(null);
+
+    const { data, error } =
+      await createUserByAdmin(surname);
+
+    if (error) {
+      alert(
+        error.message ||
+          "Не удалось создать пользователя"
+      );
+      return;
+    }
+
+    setCreatedCredentials(data);
+    setNewUserSurname("");
+
+    await admin.reload();
+  } catch (error) {
+    console.error(
+      "Ошибка создания пользователя:",
+      error
+    );
+
+    alert(
+      "Не удалось создать пользователя"
+    );
+  } finally {
+    setCreatingUser(false);
+  }
+}
+
+async function copyCredentials() {
+  if (!createdCredentials) return;
+
+  const credentialsText = [
+    `Фамилия: ${createdCredentials.surname}`,
+    `Логин: ${createdCredentials.login}`,
+    `Пароль: ${createdCredentials.password}`,
+  ].join("\n");
+
+  try {
+    await navigator.clipboard.writeText(
+      credentialsText
+    );
+
+    alert(
+      "Логин и пароль скопированы"
+    );
+  } catch (error) {
+    console.error(
+      "Ошибка копирования:",
+      error
+    );
+
+    alert(
+      "Не удалось скопировать. Скопируйте данные вручную."
+    );
+  }
+}
+
+
     return <h2>Загрузка...</h2>;
   }
 
   return (
     <>
       <div className="pageHeader">
+        <section className="adminCreateUser">
+  <div className="adminCreateUserHeading">
+    <h2>Создать аккаунт</h2>
+
+    <p>
+      Введите фамилию человека. Логин и пароль
+      будут созданы автоматически.
+    </p>
+  </div>
+
+  <div className="adminCreateUserForm">
+    <label>
+      <span>Фамилия</span>
+
+      <input
+        className="searchInput"
+        type="text"
+        placeholder="Например, Иванов"
+        value={newUserSurname}
+        onChange={(event) =>
+          setNewUserSurname(
+            event.target.value
+          )
+        }
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            handleCreateUser();
+          }
+        }}
+        disabled={creatingUser}
+      />
+    </label>
+
+    <button
+      type="button"
+      className="primaryBtn"
+      onClick={handleCreateUser}
+      disabled={
+        creatingUser ||
+        newUserSurname.trim().length < 2
+      }
+    >
+      {creatingUser
+        ? "Создаём..."
+        : "Создать аккаунт"}
+    </button>
+  </div>
+
+  {createdCredentials && (
+    <div className="createdCredentials">
+      <h3>Аккаунт успешно создан</h3>
+
+      <div className="credentialRow">
+        <span>Фамилия:</span>
+
+        <strong>
+          {createdCredentials.surname}
+        </strong>
+      </div>
+
+      <div className="credentialRow">
+        <span>Логин:</span>
+
+        <code>
+          {createdCredentials.login}
+        </code>
+      </div>
+
+      <div className="credentialRow">
+        <span>Пароль:</span>
+
+        <code>
+          {createdCredentials.password}
+        </code>
+      </div>
+
+      <p className="credentialsWarning">
+        Скопируйте пароль сейчас. Повторно
+        посмотреть его после обновления страницы
+        будет нельзя.
+      </p>
+
+      <button
+        type="button"
+        className="secondaryBtn"
+        onClick={copyCredentials}
+      >
+        Скопировать логин и пароль
+      </button>
+    </div>
+  )}
+</section>
         <div>
           <h1>Пользователи</h1>
           <p className="pageSubtitle">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
-import "./App.css";
+
 
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -11,14 +11,14 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function App() {
   const [showAuth, setShowAuth] = useState(false);
-  const [authMode, setAuthMode] = useState("signup");
+  const [authMode, setAuthMode] = useState("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [legalAccepted, setLegalAccepted] = useState(false);
+
+  
   const [loading, setLoading] = useState(false);
-  const [resendingEmail, setResendingEmail] = useState(false);
-  const [resendTimer, setResendTimer] = useState(0);
+ 
+ 
 
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
@@ -118,15 +118,7 @@ export default function App() {
   };
 },
  []);
- useEffect(() => {
-  if (resendTimer <= 0) return;
-
-  const timer = setInterval(() => {
-    setResendTimer((prev) => prev - 1);
-  }, 1000);
-
-  return () => clearInterval(timer);
-}, [resendTimer]);
+ 
 
 
 
@@ -519,131 +511,9 @@ async function loadCurrentUser(authUser) {
 
   return "Произошла ошибка. Попробуйте ещё раз.";
 }
-  async function handleSignUp() {
-  if (!name.trim() || !email.trim() || !password) {
-    toast.error("Введите имя, Email и пароль.");
-    return;
-  }
+  
 
-  if (!legalAccepted) {
-    toast.error(
-      "Подтвердите согласие с Пользовательским соглашением и Политикой конфиденциальности."
-    );
-    return;
-  }
 
-  try {
-    setLoading(true);
-
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: {
-          name: name.trim(),
-        },
-      },
-    });
-
-    if (error) {
-      toast.error(getAuthErrorMessage(error));
-      return;
-    }
-
-    if (!data?.user) {
-  toast.error(
-    "Не удалось создать аккаунт. Проверьте введённые данные и попробуйте ещё раз."
-  );
-  return;
-}
-
-const { error: insertError } = await supabase
-  .from("users")
-  .insert({
-    auth_id: data.user.id,
-    email: data.user.email,
-    name: name.trim(),
-    balance: 0,
-  });
-
-if (insertError && insertError.code !== "23505") {
-  console.error("Ошибка сохранения профиля:", insertError);
-
-  toast.error(
-    "Аккаунт создан, но не удалось сохранить профиль. Обратитесь в поддержку."
-  );
-
-  return;
-}
-
-toast.success(
-  "Аккаунт создан. Мы отправили письмо для подтверждения Email. Откройте письмо, подтвердите адрес и затем войдите."
-);
-setShowAuth(false);
-
-    setName("");
-    setEmail("");
-    setPassword("");
-    setLegalAccepted(false);
-    setAuthMode("signin");
-  } catch (error) {
-    toast.error(getAuthErrorMessage(error));
-  } finally {
-    setLoading(false);
-  }
-}
-
-async function resendConfirmationEmail() {
-  const normalizedEmail = email.trim();
-if (resendTimer > 0) {
-  toast.error(
-    `Повторная отправка будет доступна через ${resendTimer} сек.`
-  );
-  return;
-}
-  if (!normalizedEmail) {
-    toast.error(
-      "Введите Email, на который нужно повторно отправить письмо."
-    );
-    return;
-  }
-
-  try {
-    setResendingEmail(true);
-
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email: normalizedEmail,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
-
-    if (error) {
-      console.error(
-        "Ошибка повторной отправки письма:",
-        error
-      );
-
-      toast.error(getAuthErrorMessage(error));
-      return;
-    }
-
-    toast.success(
-      `Письмо повторно отправлено на ${normalizedEmail}. Проверьте входящие сообщения и папку «Спам».`
-    );
-    setResendTimer(60);
-  } catch (error) {
-    console.error(
-      "Ошибка повторной отправки письма:",
-      error
-    );
-
-    toast.error(getAuthErrorMessage(error));
-  } finally {
-    setResendingEmail(false);
-  }
-}
  
  async function handleSignIn() {
   if (!email.trim() || !password) {
@@ -654,12 +524,17 @@ if (resendTimer > 0) {
   try {
     setLoading(true);
 
-    const { data, error } =
-      await supabase.auth.signInWithPassword({
-        
-        email: email.trim(),
-        password,
-      });
+    const enteredLogin = email.trim().toLowerCase();
+
+const authEmail = enteredLogin.includes("@")
+  ? enteredLogin
+  : `${enteredLogin}@accounts.bonustest.local`;
+
+const { data, error } =
+  await supabase.auth.signInWithPassword({
+    email: authEmail,
+    password,
+  });
        if (error) {
   console.error("Ошибка входа:", error);
 
@@ -827,50 +702,27 @@ if (!authReady) {
 
            <div className="authHeading">
   <span className="authEyebrow">
-    {authMode === "signup"
-      ? "Создание аккаунта"
-      : "Личный кабинет"}
+    Личный кабинет
   </span>
 
-  <h2>
-    {authMode === "signup"
-      ? "Регистрация"
-      : "Вход"}
-  </h2>
+  <h2>Вход</h2>
 
   <p>
-    {authMode === "signup"
-      ? "Заполните данные, чтобы начать выполнять задания."
-      : "Введите данные для входа в аккаунт."}
+    Введите логин и пароль, выданные администратором.
   </p>
 </div>
 
-            <div className="authFields">
-  {authMode === "signup" && (
-    <label className="authField">
-      <span>Ваше имя</span>
-
-      <input
-        className="authInput"
-        type="text"
-        placeholder="Например, Артём"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        autoComplete="name"
-      />
-    </label>
-  )}
-
+<div className="authFields">
   <label className="authField">
-    <span>Email</span>
+    <span>Логин</span>
 
     <input
       className="authInput"
-      type="email"
-      placeholder="example@mail.ru"
+      type="text"
+      placeholder="Например, ivanov"
       value={email}
       onChange={(e) => setEmail(e.target.value)}
-      autoComplete="email"
+      autoComplete="username"
     />
   </label>
 
@@ -880,107 +732,25 @@ if (!authReady) {
     <input
       className="authInput"
       type="password"
-      placeholder="Минимум 6 символов"
+      placeholder="Введите пароль"
       value={password}
       onChange={(e) => setPassword(e.target.value)}
-      autoComplete={
-        authMode === "signup"
-          ? "new-password"
-          : "current-password"
-      }
+      autoComplete="current-password"
     />
   </label>
 </div>
-{authMode === "signin" && (
-  <div className="authEmailHelp">
-    <span>Не пришло письмо с подтверждением?</span>
 
-    <button
-      type="button"
-      className="resendEmailBtn"
-      onClick={resendConfirmationEmail}
-      disabled={
-  resendingEmail ||
-  loading ||
-  resendTimer > 0
-}
-    >
-      {
-  resendingEmail
-    ? "Отправляем..."
-    : resendTimer > 0
-      ? `Повторно через ${resendTimer} сек`
-      : "Отправить письмо ещё раз"
-}
-    </button>
-  </div>
-)}
-            {authMode === "signup" && (
-  <label className="legalAcceptCheck">
-    <input
-      type="checkbox"
-      checked={legalAccepted}
-      onChange={(event) =>
-        setLegalAccepted(event.target.checked)
-      }
-    />
-
-    <span className="legalAcceptCustom" />
-
-    <span className="legalAcceptText">
-      Я принимаю{" "}
-      <a
-        href="/agreement"
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(event) => event.stopPropagation()}
-      >
-        Пользовательское соглашение
-      </a>{" "}
-      и{" "}
-      <a
-        href="/privacy"
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(event) => event.stopPropagation()}
-      >
-        Политику конфиденциальности
-      </a>
-    </span>
-  </label>
-)}
-
-            <button
+<button
   className="primaryBtn authSubmit"
-  onClick={authMode === "signup" ? handleSignUp : handleSignIn}
-  disabled={
-    loading ||
-    (authMode === "signup" && !legalAccepted)
-  }
+  onClick={handleSignIn}
+  disabled={loading}
 >
-              {loading
-  ? authMode === "signup"
-    ? "Создаём аккаунт..."
-    : "Выполняется вход..."
-  : authMode === "signup"
-    ? "Создать аккаунт"
-    : "Войти"}
-            </button>
+  {loading ? "Выполняется вход..." : "Войти"}
+</button>
 
-            <button
-  className="switchAuth"
-  onClick={() => {
-    setAuthMode(
-      authMode === "signup" ? "signin" : "signup"
-    );
-
-    setLegalAccepted(false);
-  }}
->
-              {authMode === "signup"
-                ? "Уже есть аккаунт? Войти"
-                : "Нет аккаунта? Зарегистрироваться"}
-            </button>
+<p className="authHint">
+  Нет аккаунта? Обратитесь к администратору для получения логина и пароля.
+</p>   
           </div>
         </div>
       )}

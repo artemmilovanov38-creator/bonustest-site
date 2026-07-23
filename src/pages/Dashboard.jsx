@@ -84,39 +84,35 @@ const availableTasks = tasks.filter((task) => {
     <div className="userDashboard">
       
       <header className="userTopbar">
-        <div>
-          <span>Личный кабинет</span>
+  <div>
+    <span>Личный кабинет</span>
+  </div>
 
-<h1>
-  👋 Здравствуйте, {user.name || user.email}
-</h1>
+  <div className="userTopActions">
+    <div className="syncStatus">
+      🟢 Автообновление
+    </div>
 
-<p className="userEmail">
-  {user.email}
-</p>
-        </div>
+    {isAdmin && (
+      <button
+        className="secondaryBtn"
+        onClick={() => {
+          localStorage.setItem("isAdminPanel", "true");
+          setIsAdminPanel(true);
+        }}
+      >
+        Админка
+      </button>
+    )}
 
-        <div className="userTopActions">
-          <div className="syncStatus">
-  🟢 Автообновление
-</div>
-          {isAdmin && (
-            <button
-              className="secondaryBtn"
-              onClick={() => {
-  localStorage.setItem("isAdminPanel", "true");
-  setIsAdminPanel(true);
-}}
-            >
-              Админка
-            </button>
-          )}
-
-          <button className="primaryBtn" onClick={signOutUser}>
-            Выйти
-          </button>
-        </div>
-      </header>
+    <button
+      className="primaryBtn"
+      onClick={signOutUser}
+    >
+      Выйти
+    </button>
+  </div>
+</header>
 
       <section className="userStatsGrid">
         <div className="userStatCard balance">
