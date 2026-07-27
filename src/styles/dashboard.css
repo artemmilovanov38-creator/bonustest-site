@@ -1597,3 +1597,137 @@ box-shadow:0 10px 25px rgba(59,130,246,.35);
     grid-template-columns: 1fr;
   }
 }
+/* Полное описание задания */
+.taskDescriptionPreview {
+  display: block;
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  line-height: 1.55;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-height: none;
+
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: initial;
+}
+
+/* Карточка должна увеличиваться под текст */
+.userTaskCard,
+.taskCardV2 {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* Кнопка не должна лежать поверх описания */
+.taskOpenBtn {
+  position: static;
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+}
+@media (max-width: 768px) {
+  .userDashboard {
+    width: 100%;
+    padding: 16px 14px 90px;
+    overflow-x: hidden;
+  }
+
+  .taskGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .userTaskCard,
+  .taskCardV2 {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 20px 16px;
+    border-radius: 24px;
+    overflow: visible;
+  }
+
+  .taskCardHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .taskBadges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .taskDifficulty,
+  .taskTime {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .taskRewardBox {
+    flex-shrink: 0;
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .taskTitleRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 26px;
+  }
+
+  .taskIcon {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+  }
+
+  .taskMainInfo {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .taskMainInfo h3 {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .taskDescriptionPreview {
+    display: block;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.55;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    overflow-wrap: anywhere;
+    max-height: none;
+
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: initial;
+  }
+
+  .taskOpenBtn {
+    position: static;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 18px;
+    padding: 12px 16px;
+  }
+
+  .taskExpandedContent {
+    margin-top: 16px;
+  }
+}
