@@ -160,64 +160,109 @@ export default function Dashboard({
   </div>
 
   {mobileActionsOpened && (
-    <div className="luxMobileActions">
-      <button
-        type="button"
-        onClick={() => {
-          setActiveTab("tasks");
-          setMobileActionsOpened(false);
-        }}
-      >
-        Задания
-        <span>{availableTasks.length}</span>
-      </button>
+  <div
+    className="luxMobileOverlay"
+    onClick={() => setMobileActionsOpened(false)}
+  >
+    <aside
+      className="luxMobileDrawer"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className="luxMobileDrawerHeader">
+        <div className="luxMobileProfile">
+          <div className="luxMobileAvatar">
+            {userName.charAt(0).toUpperCase()}
+          </div>
 
-      <button
-        type="button"
-        onClick={() => {
-          setActiveTab("history");
-          setMobileActionsOpened(false);
-        }}
-      >
-        История
-        <span>{taskHistory.length}</span>
-      </button>
+          <div>
+            <strong>{userName}</strong>
+            <span>Личный кабинет</span>
+          </div>
+        </div>
 
-      <button
-        type="button"
-        onClick={() => {
-          setActiveTab("withdraws");
-          setMobileActionsOpened(false);
-        }}
-      >
-        Выводы
-        <span>{withdrawHistory.length}</span>
-      </button>
-
-      {isAdmin && (
         <button
           type="button"
-          className="luxMobileAdminAction"
+          className="luxMobileDrawerClose"
+          onClick={() => setMobileActionsOpened(false)}
+          aria-label="Закрыть меню"
+        >
+          ×
+        </button>
+      </div>
+
+      <nav className="luxMobileDrawerNav">
+        <button
+          type="button"
           onClick={() => {
-            localStorage.setItem("isAdminPanel", "true");
-            setIsAdminPanel(true);
+            setActiveTab("tasks");
             setMobileActionsOpened(false);
           }}
         >
-          Админка
-          <span>→</span>
+          <span>Задания</span>
+          <b>{availableTasks.length}</b>
         </button>
-      )}
 
-      <button
-        type="button"
-        className="luxMobileExitAction"
-        onClick={signOutUser}
-      >
-        Выйти
-      </button>
-    </div>
-  )}
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab("history");
+            setMobileActionsOpened(false);
+          }}
+        >
+          <span>История</span>
+          <b>{taskHistory.length}</b>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab("done");
+            setMobileActionsOpened(false);
+          }}
+        >
+          <span>Выполнено</span>
+          <b>{approvedTasks.length}</b>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab("withdraws");
+            setMobileActionsOpened(false);
+          }}
+        >
+          <span>Выводы</span>
+          <b>{withdrawHistory.length}</b>
+        </button>
+      </nav>
+
+      <div className="luxMobileDrawerBottom">
+        {isAdmin && (
+          <button
+            type="button"
+            className="luxMobileDrawerAdmin"
+            onClick={() => {
+              localStorage.setItem("isAdminPanel", "true");
+              setIsAdminPanel(true);
+              setMobileActionsOpened(false);
+            }}
+          >
+            <span>Админка</span>
+            <b>→</b>
+          </button>
+        )}
+
+        <button
+          type="button"
+          className="luxMobileDrawerExit"
+          onClick={signOutUser}
+        >
+          Выйти
+        </button>
+      </div>
+    </aside>
+  </div>
+)}
 </header>
 
       <main className="luxDashboardMain">
