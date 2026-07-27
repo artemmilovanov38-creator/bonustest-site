@@ -1,522 +1,1083 @@
-/* ЗАМЕНИТЕ ЭТИМ КОДОМ ВЕСЬ src/styles/dashboard.css */
+/* =========================================================
+   LUXURY DASHBOARD
+========================================================= */
 
-.userDashboard {
+.luxDashboard {
+  position: relative;
   min-height: 100vh;
-  padding: 32px;
   overflow-x: hidden;
-  color: #f8fbff;
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, .2), transparent 34%),
-    #070b16;
+  color: #f7f9ff;
+  background: #070a12;
 }
 
-.userTopbar,
-.userStatsGrid,
-.dashboardActions,
-.cabinetTabs,
-.userSection {
-  width: 100%;
-  max-width: 1180px;
+.luxDashboardBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.luxDashboardGlow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+}
+
+.luxDashboardGlowBlue {
+  top: -220px;
+  left: -160px;
+  width: 620px;
+  height: 620px;
+  background: rgba(37, 99, 235, 0.28);
+}
+
+.luxDashboardGlowPink {
+  top: -160px;
+  right: -220px;
+  width: 620px;
+  height: 620px;
+  background: rgba(217, 70, 239, 0.18);
+}
+
+.luxDashboardGrid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 76px 76px;
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 88%);
+}
+
+.luxDashboard > *:not(.luxDashboardBackdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+.luxTopbar,
+.luxDashboardMain {
+  width: min(1480px, calc(100% - 64px));
   margin-left: auto;
   margin-right: auto;
 }
 
-.userTopbar {
+/* TOPBAR */
+
+.luxTopbar {
+  min-height: 88px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
   gap: 24px;
-  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
-.userTopbar > div:first-child { min-width: 0; }
-.userTopbar > div:first-child > span { color: #9ccaff; font-weight: 800; }
-
-.userTopbar h1 {
-  margin: 8px 0 0;
-  font-size: clamp(24px, 4vw, 42px);
-  line-height: 1.15;
-  overflow-wrap: anywhere;
+.luxBrandBlock {
+  display: flex;
+  align-items: center;
+  gap: 13px;
 }
 
-.userEmail {
-  margin: 7px 0 0;
-  color: rgba(255,255,255,.55);
+.luxBrandMark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: linear-gradient(135deg, rgba(14,165,255,.25), rgba(217,70,239,.2));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
   font-size: 14px;
-  overflow-wrap: anywhere;
+  font-weight: 900;
 }
 
-.userTopActions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+.luxBrandBlock span {
+  display: block;
+  margin-bottom: 3px;
+  color: rgba(255,255,255,.42);
+  font-size: 11px;
 }
 
-.syncStatus {
+.luxBrandBlock strong {
+  display: block;
+  font-size: 15px;
+}
+
+.luxTopActions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 12px 18px;
+  gap: 10px;
+}
+
+.luxLiveStatus,
+.luxGhostButton,
+.luxExitButton {
+  min-height: 44px;
   border-radius: 14px;
-  background: rgba(34,197,94,.12);
+  font-weight: 800;
+}
+
+.luxLiveStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 15px;
+  background: rgba(34,197,94,.1);
   color: #86efac;
+  font-size: 12px;
+}
+
+.luxLiveStatus span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 13px rgba(34,197,94,.8);
+}
+
+.luxGhostButton,
+.luxExitButton {
+  padding: 0 16px;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.luxGhostButton {
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.04);
+  color: #fff;
+}
+
+.luxExitButton {
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(135deg, #0ea5ff, #7c3aed, #ef2bd8);
+  color: #fff;
+}
+
+.luxGhostButton:hover,
+.luxExitButton:hover {
+  transform: translateY(-2px);
+}
+
+/* MAIN */
+
+.luxDashboardMain {
+  padding: 36px 0 80px;
+}
+
+.luxHeroPanel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(420px, .75fr);
+  gap: 16px;
+}
+
+.luxBalanceHero,
+.luxMetricsPanel,
+.luxContentShell {
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.022));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.luxBalanceHero {
+  min-height: 390px;
+  padding: 34px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 90% 8%, rgba(217,70,239,.15), transparent 30%),
+    radial-gradient(circle at 10% 100%, rgba(59,130,246,.14), transparent 36%),
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.022));
+}
+
+.luxBalanceTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.luxBalanceTopline > span {
+  color: rgba(255,255,255,.46);
+  font-size: 13px;
   font-weight: 700;
 }
 
-.userStatsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 22px;
-}
-
-.userStatCard {
-  min-width: 0;
-  padding: 24px;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 24px;
-  background: rgba(255,255,255,.06);
-}
-
-.userStatCard.balance {
-  background: linear-gradient(135deg, rgba(59,130,246,.22), rgba(217,70,239,.16));
-}
-
-.userStatCard span,
-.userStatCard p { opacity: .7; }
-
-.userStatCard h2 {
-  margin: 10px 0 6px;
-  font-size: 34px;
-}
-
-.userStatCard p { margin: 0; }
-
-.dashboardActions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-}
-
-.cabinetTabs {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 28px;
-}
-
-.cabinetTabs button {
-  min-height: 48px;
-  padding: 14px 20px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 16px;
-  background: rgba(255,255,255,.06);
+.luxMiniAction {
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 13px;
+  background: rgba(255,255,255,.045);
   color: #fff;
   font-weight: 800;
   cursor: pointer;
-  transition: .2s;
 }
 
-.cabinetTabs button:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,.1);
+.luxBalanceHero > strong {
+  display: block;
+  margin-top: 32px;
+  font-size: clamp(58px, 7vw, 100px);
+  line-height: .95;
+  letter-spacing: -.065em;
 }
 
-.cabinetTabs button.active {
-  border-color: transparent;
-  background: linear-gradient(135deg, #0ea5ff, #7c3aed, #ff2bd6);
+.luxBalanceHero > p {
+  max-width: 520px;
+  margin: 18px 0 0;
+  color: rgba(255,255,255,.48);
+  line-height: 1.6;
 }
 
-.userSection { margin-top: 34px; }
+.luxBalanceActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 38px;
+}
 
-.sectionHead { margin-bottom: 18px; }
-.sectionHead h2 { margin: 0 0 8px; font-size: 30px; }
-.sectionHead p { margin: 0; opacity: .7; line-height: 1.55; }
+.luxPrimaryAction,
+.luxSecondaryAction {
+  min-height: 54px;
+  padding: 0 21px;
+  border-radius: 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
 
-.taskGrid {
+.luxPrimaryAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(135deg, #0ea5ff, #7c3aed 55%, #ef2bd8);
+  color: #fff;
+  box-shadow: 0 18px 50px rgba(124,58,237,.25);
+}
+
+.luxSecondaryAction {
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.045);
+  color: #fff;
+}
+
+.luxMetricsPanel {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: rgba(255,255,255,.08);
+}
+
+.luxMetricsPanel article {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  padding: 24px 26px;
+  background: rgba(7,10,18,.95);
+}
+
+.luxMetricsPanel article:nth-child(2) {
+  background: linear-gradient(135deg, rgba(24,36,69,.96), rgba(38,20,52,.96));
+}
+
+.luxMetricsPanel span {
+  color: rgba(255,255,255,.4);
+  font-size: 11px;
+}
+
+.luxMetricsPanel strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 31px;
+  letter-spacing: -.035em;
+}
+
+.luxMetricsPanel p {
+  margin: 7px 0 0;
+  color: rgba(255,255,255,.36);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* CONTENT */
+
+.luxContentShell {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 28px;
+}
+
+.luxTabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 17px;
+  background: rgba(255,255,255,.025);
+}
+
+.luxTabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: rgba(255,255,255,.5);
+  font-weight: 800;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.luxTabs button b {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  font-size: 10px;
+}
+
+.luxTabs button.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(14,165,255,.16), rgba(124,58,237,.16), rgba(217,70,239,.12));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+.luxSection {
+  padding: 34px 8px 8px;
+}
+
+.luxSectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 22px;
+  margin-bottom: 26px;
+}
+
+.luxSectionHeader > div:first-child > span {
+  color: #9dccff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.luxSectionHeader h2 {
+  margin: 8px 0 9px;
+  font-size: clamp(30px, 4vw, 48px);
+  letter-spacing: -.045em;
+}
+
+.luxSectionHeader p {
+  margin: 0;
+  color: rgba(255,255,255,.44);
+  line-height: 1.55;
+}
+
+.luxSectionCount {
+  padding: 10px 13px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: rgba(255,255,255,.5);
+  font-size: 11px;
+}
+
+/* TASKS */
+
+.luxTaskGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 14px;
   align-items: start;
 }
 
-.userTaskCard.taskCardV2 {
+.luxTaskCard {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-self: start;
-  gap: 18px;
-  width: 100%;
   min-width: 0;
-  height: auto;
-  min-height: 0;
-  max-height: none;
   padding: 22px;
-  overflow: visible;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 25px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
   background:
-    radial-gradient(circle at top left, rgba(59,130,246,.12), transparent 42%),
-    rgba(255,255,255,.055);
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.022));
+  transition: .22s ease;
 }
 
-.userTaskCard.taskCardV2.collapsed,
-.userTaskCard.taskCardV2.opened {
-  height: auto;
-  min-height: 0;
-  max-height: none;
-}
-
-.userTaskCard.taskCardV2:hover {
+.luxTaskCard:hover {
   transform: translateY(-4px);
-  border-color: rgba(122,184,255,.32);
-  box-shadow: 0 18px 45px rgba(0,0,0,.28);
+  border-color: rgba(122,184,255,.25);
+  box-shadow: 0 22px 60px rgba(0,0,0,.2);
 }
 
-.taskCardHead {
+.luxTaskCardHot {
+  border-color: rgba(249,115,22,.26);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(249,115,22,.13), transparent 31%),
+    linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.022));
+}
+
+.luxTaskCardTop {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 14px;
 }
 
-.taskBadges {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.taskDifficulty,
-.taskTime,
-.taskHot {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  padding: 7px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.taskDifficulty { background: rgba(59,130,246,.16); color: #9ccaff; }
-.taskTime { background: rgba(255,255,255,.08); color: #fff; }
-.taskHot { background: rgba(255,120,0,.18); color: #ffb347; }
-
-.taskRewardBox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  min-width: max-content;
-  padding: 10px 17px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.taskTitleRow {
+.luxTaskIdentity {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 13px;
   min-width: 0;
 }
 
-.taskIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
-  margin: 0;
+.luxTaskIcon {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(122,184,255,.13);
   border-radius: 14px;
-  background: rgba(255,255,255,.08);
-  font-size: 23px;
+  background: linear-gradient(135deg, rgba(14,165,255,.13), rgba(124,58,237,.13));
+  color: #9dccff;
+  font-size: 15px;
+  font-weight: 900;
 }
 
-.taskIcon.hotTaskIcon {
-  border: 1px solid rgba(251,146,60,.22);
-  background: linear-gradient(135deg, rgba(249,115,22,.2), rgba(234,88,12,.1));
+.luxTaskIdentity span {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(255,255,255,.38);
+  font-size: 10px;
 }
 
-.taskMainInfo { flex: 1; min-width: 0; }
-
-.taskMainInfo h3 {
+.luxTaskIdentity h3 {
   margin: 0;
-  font-size: 21px;
+  font-size: 18px;
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
 
-.taskDescriptionPreview {
-  display: block;
-  margin: 10px 0 0;
-  min-height: 0;
-  max-height: none;
-  overflow: visible;
-  color: rgba(255,255,255,.72);
-  font-size: 15px;
-  line-height: 1.6;
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  text-overflow: unset;
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: initial;
+.luxReward {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: rgba(34,197,94,.11);
+  color: #86efac;
+  font-size: 11px;
+  font-weight: 900;
 }
 
-.taskOpenBtn {
-  position: static;
-  display: block;
-  flex-shrink: 0;
-  width: 100%;
-  min-height: 48px;
-  margin-top: 2px;
-  padding: 13px 16px;
-  border: 1px solid rgba(122,184,255,.25);
-  border-radius: 15px;
-  background: rgba(59,130,246,.1);
-  color: #8bc4ff;
+.luxTaskDescription {
+  margin: 20px 0 0;
+  color: rgba(255,255,255,.5);
   font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.luxTaskMeta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.luxTaskMeta span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.045);
+  color: rgba(255,255,255,.43);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.luxTaskToggle {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 0 15px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+  color: #fff;
   font-weight: 800;
   cursor: pointer;
-  transition: .2s;
 }
 
-.taskOpenBtn:hover {
-  transform: translateY(-1px);
-  background: rgba(59,130,246,.18);
-  border-color: rgba(122,184,255,.5);
-}
-
-.taskExpandedContent {
+.luxTaskExpanded {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding-top: 4px;
-  animation: taskExpand .2s ease;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.07);
 }
 
-.taskFullDescription,
-.taskInstructionBlock,
-.taskUploadBlock {
-  padding: 17px;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 17px;
-  background: rgba(255,255,255,.045);
+.luxTaskInfoBlock,
+.luxUploadBlock {
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px;
+  background: rgba(255,255,255,.025);
 }
 
-.taskFullDescription h4,
-.taskInstructionBlock h4 {
-  margin: 0 0 11px;
-  color: #9ccaff;
-  font-size: 14px;
+.luxTaskInfoBlock > span,
+.luxUploadBlock > span {
+  display: block;
+  margin-bottom: 9px;
+  color: #9dccff;
+  font-size: 11px;
+  font-weight: 900;
 }
 
-.taskFullDescription p,
-.taskInstruction {
+.luxTaskInfoBlock p {
   margin: 0;
-  max-height: none;
-  overflow: visible;
-  white-space: pre-wrap;
+  color: rgba(255,255,255,.5);
   line-height: 1.65;
-  opacity: .86;
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.taskInstruction::after { display: none; }
+.luxTaskLink {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(14,165,255,.14), rgba(124,58,237,.14));
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
 
-.taskUploadBlock {
+.luxFileUpload {
+  min-height: 92px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  padding: 15px;
+  border: 1px dashed rgba(255,255,255,.13);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+  cursor: pointer;
+}
+
+.luxFileUpload.hasFile {
+  border-style: solid;
+  border-color: rgba(34,197,94,.3);
+  background: rgba(34,197,94,.06);
+}
+
+.luxFileUpload input {
+  display: none;
+}
+
+.luxFileUpload strong {
+  color: #fff;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.luxFileUpload span {
+  margin-top: 5px;
+  color: rgba(255,255,255,.35);
+  font-size: 10px;
+}
+
+.luxSubmitTask {
+  min-height: 50px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 15px;
+  background: linear-gradient(135deg, #0ea5ff, #7c3aed, #ef2bd8);
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.luxSubmitTask:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* EMPTY */
+
+.luxEmptyState {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 22px;
+  background: rgba(255,255,255,.022);
+  text-align: center;
+}
+
+.luxEmptyIcon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(14,165,255,.14), rgba(124,58,237,.14));
+  color: #9dccff;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.luxEmptyState h3 {
+  margin: 0 0 9px;
+  font-size: 22px;
+}
+
+.luxEmptyState p {
+  max-width: 420px;
+  margin: 0;
+  color: rgba(255,255,255,.42);
+}
+
+/* TIMELINE */
+
+.luxTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.luxTimelineItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 15px;
+  min-height: 82px;
+  padding: 17px 18px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 18px;
+  background: rgba(255,255,255,.025);
+}
+
+.luxTimelineDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #facc15;
+  box-shadow: 0 0 15px rgba(250,204,21,.45);
+}
+
+.luxTimelineItem.approved .luxTimelineDot {
+  background: #22c55e;
+  box-shadow: 0 0 15px rgba(34,197,94,.45);
+}
+
+.luxTimelineItem.rejected .luxTimelineDot {
+  background: #ef4444;
+  box-shadow: 0 0 15px rgba(239,68,68,.45);
+}
+
+.luxTimelineMain span {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(255,255,255,.38);
+  font-size: 10px;
+}
+
+.luxTimelineMain h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.luxTimelineItem > strong {
+  white-space: nowrap;
+}
+
+/* WITHDRAWS */
+
+.luxWithdrawList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 
-.taskUploadBlock > span { font-size: 14px; opacity: .75; }
-
-.taskStartBtn {
+.luxWithdrawItem {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  min-height: 52px;
-  padding: 16px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #fff;
-  text-decoration: none;
-  font-weight: 800;
-  transition: .2s;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 20px;
+  background: rgba(255,255,255,.025);
 }
 
-.taskStartBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(59,130,246,.35);
+.luxWithdrawItem span {
+  color: rgba(255,255,255,.37);
+  font-size: 10px;
 }
 
-.fileUploadV2 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 52px;
-  padding: 14px 16px;
-  border: 1px dashed rgba(255,255,255,.2);
-  border-radius: 16px;
-  background: rgba(255,255,255,.08);
-  color: #dbeafe;
-  font-weight: 800;
-  text-align: center;
-  cursor: pointer;
+.luxWithdrawItem h3 {
+  margin: 7px 0 7px;
+  font-size: 25px;
+}
+
+.luxWithdrawItem p {
+  margin: 0;
+  color: rgba(255,255,255,.42);
   overflow-wrap: anywhere;
 }
 
-.fileUploadV2.hasFile {
-  border-style: solid;
-  border-color: #22c55e;
-  background: rgba(34,197,94,.1);
-  color: #86efac;
+.luxWithdrawBadge {
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(250,204,21,.1);
+  color: #fde68a;
+  font-size: 10px;
+  font-weight: 900;
 }
 
-.fileUploadV2 input { display: none; }
-.taskSubmitBtn { width: 100%; min-height: 50px; }
+/* MODAL */
 
-.userTaskCard.taskCardV2.hotTaskCard {
-  border-color: rgba(249,115,22,.38);
-  background:
-    radial-gradient(circle at 85% 15%, rgba(249,115,22,.18), transparent 36%),
-    linear-gradient(145deg, rgba(22,28,43,.98), rgba(56,31,24,.98));
-}
-
-.userTaskCard.taskCardV2.hotTaskCard .taskOpenBtn {
-  border-color: rgba(249,115,22,.38);
-  background: linear-gradient(135deg, rgba(30,41,59,.96), rgba(67,38,31,.88));
-  color: #fdba74;
-}
-
-.historyTimeline,
-.withdrawTimeline,
-.historyList {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.historyCard,
-.withdrawCard,
-.historyItem,
-.emptyBox {
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 20px;
-  background: rgba(255,255,255,.05);
-}
-
-.historyCard,
-.withdrawCard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+.luxModalOverlay {
+  position: fixed !important;
+  inset: 0;
+  z-index: 2000 !important;
+  display: grid;
+  place-items: center;
   padding: 20px;
-  border-left: 6px solid #555;
+  background: rgba(3,5,10,.74);
+  backdrop-filter: blur(16px);
 }
 
-.historyCard.pending,
-.withdrawCard.pending { border-left-color: #facc15; }
-
-.historyCard.approved,
-.withdrawCard.approved { border-left-color: #22c55e; }
-
-.historyCard.rejected,
-.withdrawCard.rejected { border-left-color: #ef4444; }
-
-.historyCard h3,
-.withdrawCard h3,
-.historyItem h3 { margin: 0 0 7px; }
-
-.historyCard p,
-.withdrawCard p,
-.historyItem p { margin: 0; opacity: .7; overflow-wrap: anywhere; }
-
-.historyCard strong,
-.withdrawCard strong,
-.historyItem strong { flex-shrink: 0; white-space: nowrap; }
-
-.historyItem,
-.emptyBox { padding: 18px 20px; }
-
-.historyItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+.luxWithdrawModal {
+  position: relative;
+  width: min(460px, 100%);
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 90% 5%, rgba(217,70,239,.13), transparent 30%),
+    #0c111d;
+  box-shadow: 0 35px 100px rgba(0,0,0,.55);
 }
 
-.emptyTasks {
-  grid-column: 1 / -1;
-  padding: 56px 28px;
+.luxModalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
   border: 1px solid rgba(255,255,255,.08);
-  border-radius: 28px;
-  background: rgba(255,255,255,.05);
-  text-align: center;
+  border-radius: 12px;
+  background: rgba(255,255,255,.035);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
 }
 
-.emptyIcon { margin-bottom: 18px; font-size: 62px; }
-.emptyTasks h2 { margin: 0 0 12px; }
-.emptyTasks p { max-width: 420px; margin: auto; opacity: .7; line-height: 1.7; }
-
-.withdrawModal {
-  width: min(100%, 460px);
-  max-height: calc(100vh - 32px);
-  overflow-y: auto;
+.luxModalIcon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, rgba(14,165,255,.18), rgba(124,58,237,.18));
+  color: #9dccff;
+  font-size: 22px;
+  font-weight: 900;
 }
+
+.luxWithdrawModal > span {
+  color: #9dccff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.luxWithdrawModal h2 {
+  margin: 9px 0 10px;
+  font-size: 34px;
+}
+
+.luxWithdrawModal > p {
+  margin: 0 0 22px;
+  color: rgba(255,255,255,.46);
+}
+
+.luxField {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.luxField > span {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.46);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.luxField input {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  outline: none;
+  background: rgba(255,255,255,.035);
+  color: #fff;
+}
+
+.luxField input:focus {
+  border-color: rgba(122,184,255,.36);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.09);
+}
+
+.luxSubmitWithdraw {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 6px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 15px;
+  background: linear-gradient(135deg, #0ea5ff, #7c3aed, #ef2bd8);
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* TABLET */
+
+@media (max-width: 1000px) {
+  .luxHeroPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .luxMetricsPanel {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: none;
+  }
+
+  .luxMetricsPanel article {
+    min-height: 130px;
+  }
+}
+
+/* MOBILE */
+
+/* =========================================================
+   SUPPORT — MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .bonusSupportFloat {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    left: auto;
+
+    width: 56px;
+    height: 56px;
+
+    border-radius: 18px;
+  }
+
+  .bonusSupportOverlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+
+    padding: 0;
+
+    background: rgba(3, 5, 10, 0.7);
+    backdrop-filter: blur(12px);
+  }
+
+  .bonusSupportWindow {
+    width: min(92vw, 390px);
+    height: 100svh;
+    max-height: 100svh;
+
+    margin: 0;
+
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 24px 0 0 24px;
+
+    animation: bonusSupportSlideIn 0.24s ease;
+  }
+
+  .bonusSupportHeader {
+    padding:
+      calc(15px + env(safe-area-inset-top))
+      15px
+      15px;
+  }
+
+  .bonusSupportWindow .chatWelcome {
+    padding: 14px 15px;
+  }
+
+  .bonusSupportWindow .chatMessages {
+    padding: 14px;
+  }
+
+  .bonusSupportWindow .chatBubble {
+    max-width: 88%;
+  }
+
+  .bonusSupportWindow .chatForm {
+    padding:
+      11px
+      11px
+      calc(11px + env(safe-area-inset-bottom));
+  }
+
+  .bonusSupportWindow .chatInput {
+    min-height: 48px;
+  }
+
+  .bonusSupportWindow .chatSendBtn {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+  }
+}
+
+@keyframes bonusSupportSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+/* =========================================================
+   SUPPORT CHAT
+========================================================= */
 
 .supportFloatButton {
   position: fixed;
-  right: 30px;
-  bottom: 30px;
-  z-index: 999;
-  width: 64px;
-  height: 64px;
-  border: 0;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0ea5ff, #7c3aed);
-  color: #fff;
-  font-size: 28px;
+  right: 28px;
+  bottom: 28px;
+  z-index: 1500;
+
+  display: grid;
+  place-items: center;
+
+  width: 62px;
+  height: 62px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+
+  background:
+    linear-gradient(135deg, #0ea5ff, #7c3aed 55%, #ef2bd8);
+
+  color: #ffffff;
+  font-size: 0;
   cursor: pointer;
+
+  box-shadow:
+    0 20px 55px rgba(124, 58, 237, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.supportFloatButton::before {
+  content: "✦";
+  font-size: 23px;
+  line-height: 1;
+}
+
+.supportFloatButton::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 9px;
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  background: #22c55e;
+
+  box-shadow: 0 0 13px rgba(34, 197, 94, 0.9);
+}
+
+.supportFloatButton:hover {
+  transform: translateY(-4px) scale(1.03);
+
+  box-shadow:
+    0 26px 70px rgba(124, 58, 237, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .supportOverlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 1600;
+
   display: flex;
-  justify-content: flex-end;
   align-items: flex-end;
-  padding: 30px;
-  background: rgba(0,0,0,.45);
+  justify-content: flex-end;
+
+  padding: 28px;
+
+  background: rgba(3, 5, 10, 0.68);
+  backdrop-filter: blur(14px);
 }
 
 .supportWindow {
   display: flex;
   flex-direction: column;
-  width: 420px;
-  max-width: 100%;
-  height: min(650px, calc(100vh - 60px));
+
+  width: min(430px, 100%);
+  height: min(680px, calc(100vh - 56px));
+
   overflow: hidden;
-  border-radius: 24px;
-  background: #101827;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 28px;
+
+  background:
+    radial-gradient(
+      circle at 90% 0%,
+      rgba(217, 70, 239, 0.13),
+      transparent 32%
+    ),
+    #0c111d;
+
+  color: #f7f9ff;
+
+  box-shadow:
+    0 35px 100px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .supportChatBox {
@@ -530,23 +1091,44 @@
   display: flex;
   align-items: center;
   gap: 14px;
+
   padding: 18px 20px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .chatAvatar {
   display: grid;
   place-items: center;
+
   width: 46px;
   height: 46px;
   flex: 0 0 46px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #0ea5ff, #7c3aed);
-  font-size: 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 255, 0.22),
+      rgba(124, 58, 237, 0.22)
+    );
+
+  font-size: 20px;
 }
 
-.chatWelcome h4 { margin: 0 0 4px; }
-.chatWelcome p { margin: 0; opacity: .65; font-size: 13px; }
+.chatWelcome h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.chatWelcome p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+}
 
 .chatMessages {
   display: flex;
@@ -554,207 +1136,699 @@
   min-height: 0;
   flex-direction: column;
   gap: 12px;
+
   overflow-y: auto;
   padding: 18px;
 }
 
-.chatBubble {
-  max-width: 78%;
-  padding: 13px 15px;
-  border-radius: 18px;
-  line-height: 1.45;
+.chatMessages::-webkit-scrollbar {
+  width: 5px;
 }
 
-.chatBubble p { margin: 0 0 6px; }
-.chatBubble span { display: block; font-size: 11px; opacity: .65; }
+.chatMessages::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.chatBubble {
+  max-width: 82%;
+  padding: 13px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+
+  color: #ffffff;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.chatBubble p {
+  margin: 0 0 6px;
+}
+
+.chatBubble span {
+  display: block;
+
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 10px;
+}
 
 .chatBubble.user {
   align-self: flex-end;
-  background: linear-gradient(135deg, #0ea5ff, #7c3aed, #d946ef);
+
+  border-bottom-right-radius: 6px;
+
+  background:
+    linear-gradient(135deg, #0ea5ff, #7c3aed 60%, #ef2bd8);
 }
 
 .chatBubble.admin {
   align-self: flex-start;
-  background: rgba(255,255,255,.08);
+
+  border-bottom-left-radius: 6px;
+  background: rgba(255, 255, 255, 0.055);
 }
 
 .chatForm {
   display: flex;
   gap: 10px;
+
   padding: 14px;
-  border-top: 1px solid rgba(255,255,255,.08);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 10, 18, 0.72);
 }
 
 .chatInput {
   flex: 1;
   min-width: 0;
-  padding: 15px 16px;
-  border: 0;
+  min-height: 52px;
+
+  padding: 0 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 16px;
   outline: none;
-  background: rgba(255,255,255,.08);
-  color: #fff;
+
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+
+.chatInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.chatInput:focus {
+  border-color: rgba(122, 184, 255, 0.38);
+
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.09);
 }
 
 .chatSendBtn {
-  width: 54px;
-  height: 54px;
-  flex: 0 0 54px;
-  border: 0;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #0ea5ff, #d946ef);
-  color: #fff;
-  font-size: 20px;
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+
+  background:
+    linear-gradient(135deg, #0ea5ff, #7c3aed, #ef2bd8);
+
+  color: #ffffff;
+  font-size: 19px;
+  cursor: pointer;
+
+  transition: transform 0.2s ease;
 }
 
-@keyframes taskExpand {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+.chatSendBtn:hover {
+  transform: translateY(-2px);
 }
 
-@media (max-width: 900px) {
-  .userDashboard { padding: 20px; }
-  .userTopbar { flex-direction: column; align-items: stretch; }
-  .userStatsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .taskGrid { grid-template-columns: 1fr; }
-}
+/* MOBILE SUPPORT CHAT */
 
-@media (max-width: 640px) {
-  .userDashboard { padding: 14px 12px 88px; }
-
-  .userTopbar { gap: 16px; margin-bottom: 20px; }
-  .userTopbar h1 { font-size: 22px; }
-
-  .userTopActions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    gap: 10px;
-  }
-
-  .syncStatus { grid-column: 1 / -1; width: 100%; }
-  .userTopActions button { width: 100%; min-height: 46px; }
-
-  .userStatsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .userStatCard { padding: 16px; border-radius: 18px; }
-  .userStatCard h2 { margin: 8px 0 4px; font-size: 25px; }
-  .userStatCard span,
-  .userStatCard p { font-size: 12px; }
-
-  .dashboardActions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 22px;
-  }
-
-  .dashboardActions button { width: 100%; min-height: 48px; }
-
-  .cabinetTabs {
-    flex-wrap: nowrap;
-    gap: 7px;
-    padding: 5px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .cabinetTabs::-webkit-scrollbar { display: none; }
-
-  .cabinetTabs button {
-    flex: 0 0 auto;
-    min-width: max-content;
-    min-height: 44px;
-    padding: 11px 14px;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  .userSection { margin-top: 24px; }
-  .sectionHead h2 { font-size: 24px; }
-  .sectionHead p { font-size: 13px; }
-
-  .taskGrid { gap: 16px; }
-
-  .userTaskCard.taskCardV2 {
-    padding: 18px 16px;
-    gap: 16px;
-    border-radius: 22px;
-  }
-
-  .taskBadges { gap: 6px; }
-
-  .taskDifficulty,
-  .taskTime,
-  .taskHot { padding: 7px 10px; font-size: 11px; }
-
-  .taskRewardBox { padding: 9px 13px; font-size: 13px; }
-
-  .taskTitleRow { gap: 12px; }
-
-  .taskIcon {
-    width: 42px;
-    height: 42px;
-    flex-basis: 42px;
-    font-size: 20px;
-  }
-
-  .taskMainInfo h3 { font-size: 19px; }
-
-  .taskDescriptionPreview {
-    margin-top: 9px;
-    font-size: 15px;
-    line-height: 1.55;
-  }
-
-  .taskOpenBtn,
-  .taskStartBtn,
-  .taskSubmitBtn,
-  .fileUploadV2 {
-    width: 100%;
-    min-height: 48px;
-  }
-
-  .historyCard,
-  .withdrawCard,
-  .historyItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 13px;
-    padding: 16px;
-  }
-
-  .emptyTasks { padding: 38px 18px; }
-
-  .supportOverlay { padding: 0; }
-
-  .supportWindow {
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-  }
-
+@media (max-width: 700px) {
   .supportFloatButton {
     right: 16px;
     bottom: 16px;
-    width: 58px;
-    height: 58px;
+
+    width: 56px;
+    height: 56px;
+
+    border-radius: 18px;
   }
 
-  .chatBubble { max-width: 88%; }
+  .supportOverlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .supportWindow {
+    width: 100%;
+    height: min(88svh, 720px);
+
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 26px 26px 0 0;
+  }
+
+  .chatWelcome {
+    padding: 16px;
+  }
+
+  .chatMessages {
+    padding: 15px;
+  }
+
+  .chatBubble {
+    max-width: 88%;
+  }
+
+  .chatForm {
+    padding:
+      12px
+      12px
+      calc(12px + env(safe-area-inset-bottom));
+  }
+}
+/* =========================================================
+   UNIQUE SUPPORT CHAT
+========================================================= */
+
+.bonusSupportFloat {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1800;
+
+  display: grid;
+  place-items: center;
+
+  width: 62px;
+  height: 62px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+
+  background:
+    linear-gradient(135deg, #0ea5ff, #7c3aed 56%, #ef2bd8);
+
+  color: #fff;
+  cursor: pointer;
+
+  box-shadow:
+    0 22px 60px rgba(124, 58, 237, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-@media (max-width: 420px) {
-  .userStatsGrid,
-  .dashboardActions,
-  .userTopActions {
-    grid-template-columns: 1fr;
+.bonusSupportFloat span {
+  font-size: 23px;
+  line-height: 1;
+}
+
+.bonusSupportFloat i {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  background: #22c55e;
+
+  box-shadow: 0 0 13px rgba(34, 197, 94, 0.9);
+}
+
+.bonusSupportFloat:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 28px 76px rgba(124, 58, 237, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.bonusSupportOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1900;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  padding: 24px;
+
+  background: rgba(3, 5, 10, 0.72);
+  backdrop-filter: blur(16px);
+}
+
+.bonusSupportWindow {
+  display: flex;
+  flex-direction: column;
+
+  width: min(430px, 100%);
+  height: min(690px, calc(100svh - 48px));
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 28px;
+
+  background:
+    radial-gradient(
+      circle at 90% 0%,
+      rgba(217, 70, 239, 0.14),
+      transparent 30%
+    ),
+    #0c111d;
+
+  color: #f7f9ff;
+
+  box-shadow:
+    0 36px 110px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.bonusSupportHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bonusSupportHeader > div > span {
+  display: block;
+  margin-bottom: 4px;
+
+  color: #9dccff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.bonusSupportHeader h3 {
+  margin: 0;
+
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.bonusSupportClose {
+  display: grid;
+  place-items: center;
+
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.bonusSupportClose:hover {
+  transform: rotate(4deg);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* внутренняя часть чата */
+
+.bonusSupportWindow .supportChatBox {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.bonusSupportWindow .chatWelcome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 17px 20px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.bonusSupportWindow .chatAvatar {
+  display: grid;
+  place-items: center;
+
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 255, 0.18),
+      rgba(124, 58, 237, 0.18)
+    );
+
+  font-size: 20px;
+}
+
+.bonusSupportWindow .chatWelcome h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.bonusSupportWindow .chatWelcome p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 11px;
+}
+
+.bonusSupportWindow .chatMessages {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.bonusSupportWindow .chatMessages::-webkit-scrollbar {
+  width: 5px;
+}
+
+.bonusSupportWindow .chatMessages::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.bonusSupportWindow .chatEmpty {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: 100%;
+  padding: 30px;
+  text-align: center;
+}
+
+.bonusSupportWindow .chatEmpty > div {
+  margin-bottom: 12px;
+  font-size: 34px;
+}
+
+.bonusSupportWindow .chatEmpty h4 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.bonusSupportWindow .chatEmpty p {
+  max-width: 260px;
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.bonusSupportWindow .chatBubble {
+  max-width: 82%;
+  padding: 13px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+
+  color: #fff;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.bonusSupportWindow .chatBubble p {
+  margin: 0 0 6px;
+}
+
+.bonusSupportWindow .chatBubble span {
+  display: block;
+
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+}
+
+.bonusSupportWindow .chatBubble.user {
+  align-self: flex-end;
+
+  border-bottom-right-radius: 6px;
+
+  background:
+    linear-gradient(135deg, #0ea5ff, #7c3aed 60%, #ef2bd8);
+}
+
+.bonusSupportWindow .chatBubble.admin {
+  align-self: flex-start;
+
+  border-bottom-left-radius: 6px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.bonusSupportWindow .chatForm {
+  display: flex;
+  gap: 10px;
+
+  padding: 14px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 10, 18, 0.78);
+}
+
+.bonusSupportWindow .chatInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+
+  padding: 0 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+}
+
+.bonusSupportWindow .chatInput::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.bonusSupportWindow .chatInput:focus {
+  border-color: rgba(122, 184, 255, 0.38);
+
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.bonusSupportWindow .chatSendBtn {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+
+  background:
+    linear-gradient(135deg, #0ea5ff, #7c3aed, #ef2bd8);
+
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .bonusSupportFloat {
+    right: 14px;
+    bottom: 14px;
+
+    width: 56px;
+    height: 56px;
+
+    border-radius: 18px;
   }
 
-  .syncStatus { grid-column: auto; }
-  .taskCardHead { flex-direction: column; }
-  .taskRewardBox { align-self: flex-start; }
+  .bonusSupportOverlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .bonusSupportWindow {
+    width: 100%;
+    height: 88svh;
+
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+
+    border-radius: 26px 26px 0 0;
+  }
+
+  .bonusSupportHeader {
+    padding: 16px;
+  }
+
+  .bonusSupportWindow .chatWelcome {
+    padding: 15px 16px;
+  }
+
+  .bonusSupportWindow .chatMessages {
+    padding: 15px;
+  }
+
+  .bonusSupportWindow .chatBubble {
+    max-width: 88%;
+  }
+
+  .bonusSupportWindow .chatForm {
+    padding:
+      12px
+      12px
+      calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
+/* =========================================================
+   FINAL SUPPORT POSITION FIX
+========================================================= */
+
+.supportFloatButton,
+.bonusSupportFloat {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  left: auto !important;
+  top: auto !important;
+
+  width: 60px !important;
+  height: 60px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  z-index: 9999 !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 19px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0ea5ff,
+      #7c3aed 55%,
+      #ef2bd8
+    ) !important;
+
+  color: #ffffff !important;
+  font-size: 22px !important;
+
+  box-shadow:
+    0 22px 60px rgba(124, 58, 237, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Затемнение всей страницы */
+
+.supportOverlay,
+.bonusSupportOverlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: flex-end !important;
+
+  padding: 24px !important;
+
+  background: rgba(3, 5, 10, 0.7) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+/* Окно чата справа */
+
+.supportWindow,
+.bonusSupportWindow {
+  position: relative !important;
+
+  width: min(430px, calc(100vw - 48px)) !important;
+  height: min(680px, calc(100svh - 48px)) !important;
+
+  max-width: 430px !important;
+  max-height: calc(100svh - 48px) !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 26px !important;
+
+  background:
+    radial-gradient(
+      circle at 90% 0%,
+      rgba(217, 70, 239, 0.14),
+      transparent 30%
+    ),
+    #0c111d !important;
+
+  box-shadow:
+    0 36px 110px rgba(0, 0, 0, 0.6) !important;
+
+  transform: none !important;
+}
+
+/* Телефон: тоже справа, а не снизу */
+
+@media (max-width: 700px) {
+  .supportFloatButton,
+  .bonusSupportFloat {
+    right: 14px !important;
+    bottom: 14px !important;
+    left: auto !important;
+  }
+
+  .supportOverlay,
+  .bonusSupportOverlay {
+    align-items: stretch !important;
+    justify-content: flex-end !important;
+
+    padding: 0 !important;
+  }
+
+  .supportWindow,
+  .bonusSupportWindow {
+    width: min(92vw, 390px) !important;
+    height: 100svh !important;
+
+    max-width: none !important;
+    max-height: 100svh !important;
+
+    margin: 0 !important;
+
+    border-top: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 0 !important;
+
+    border-radius: 24px 0 0 24px !important;
+  }
 }

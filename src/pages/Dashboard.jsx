@@ -1,24 +1,26 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getStatusText } from "../utils/status";
 import SupportButton from "../components/SupportButton";
+import "../styles/dashboard.css";
 
 function getTaskIcon(title = "") {
   const text = title.toLowerCase();
 
-  if (text.includes("telegram")) return "✈️";
-  if (text.includes("тг")) return "✈️";
-  if (text.includes("vk")) return "🔵";
-  if (text.includes("вк")) return "🔵";
-  if (text.includes("youtube")) return "▶️";
-  if (text.includes("ютуб")) return "▶️";
-  if (text.includes("tiktok")) return "🎵";
-  if (text.includes("тикток")) return "🎵";
-  if (text.includes("instagram")) return "📷";
-  if (text.includes("инст")) return "📷";
-  if (text.includes("сайт")) return "🌐";
-  if (text.includes("регистра")) return "👤";
+  if (text.includes("telegram") || text.includes("тг")) return "✈️";
+  if (text.includes("vk") || text.includes("вк")) return "VK";
+  if (text.includes("youtube") || text.includes("ютуб")) return "▶";
+  if (text.includes("tiktok") || text.includes("тикток")) return "♪";
+  if (text.includes("instagram") || text.includes("инст")) return "◉";
+  if (text.includes("сайт")) return "⌁";
+  if (text.includes("регистра")) return "＋";
 
-  return "⭐";
+  return "✦";
+}
+
+function getDifficultyLabel(difficulty) {
+  if (difficulty === "Сложное") return "Сложное";
+  if (difficulty === "Среднее") return "Среднее";
+  return "Простое";
 }
 
 export default function Dashboard({
@@ -41,472 +43,536 @@ export default function Dashboard({
   siteSettings,
   isAdmin,
   setIsAdminPanel,
-  loadTasks,
-  loadTaskHistory,
-  loadWithdrawHistory,
-  loadSiteStats,
   signOutUser,
 }) {
-  const approvedTasks = taskHistory.filter(
-    (item) => item.status === "approved"
-  );
-
-  const pendingTasks = taskHistory.filter(
-    (item) => item.status === "pending"
-  );
-
-  const totalEarned = approvedTasks.reduce(
-    (sum, item) => sum + Number(item.task?.reward || 0),
-    0
-  );
-
   const [activeTab, setActiveTab] = useState("tasks");
-const [openedTasks, setOpenedTasks] = useState({});
+  const [openedTasks, setOpenedTasks] = useState({});
 
-const approvedHistory = taskHistory.filter(
-  (item) => item.status === "approved" || item.rewarded === true
-);
-
-
-const availableTasks = tasks.filter((task) => {
-  const status = taskHistory.find(
-    (item) => item.task_id === task.id
-  )?.status;
-
-  return (
-    status !== "approved" &&
-    status !== "pending"
+  const approvedTasks = useMemo(
+    () =>
+      taskHistory.filter(
+        (item) => item.status === "approved" || item.rewarded === true
+      ),
+    [taskHistory]
   );
-});
 
-  return (
-    
-    <div className="userDashboard">
-      
-      <header className="userTopbar">
-  <div>
-    <span>Личный кабинет</span>
-  </div>
+  const pendingTasks = useMemo(
+    () => taskHistory.filter((item) => item.status === "pending"),
+    [taskHistory]
+  );
 
-  <div className="userTopActions">
-    <div className="syncStatus">
-      🟢 Автообновление
-    </div>
+  const totalEarned = useMemo(
+    () =>
+      approvedTasks.reduce(
+        (sum, item) => sum + Number(item.task?.reward || 0),
+        0
+      ),
+    [approvedTasks]
+  );
 
-    {isAdmin && (
-      <button
-        className="secondaryBtn"
-        onClick={() => {
-          localStorage.setItem("isAdminPanel", "true");
-          setIsAdminPanel(true);
-        }}
-      >
-        Админка
-      </button>
-    )}
-
-    <button
-      className="primaryBtn"
-      onClick={signOutUser}
-    >
-      Выйти
-    </button>
-  </div>
-</header>
-
-      <section className="userStatsGrid">
-        <div className="userStatCard balance">
-          <span>Баланс</span>
-          <h2>{balance} ₽</h2>
-          <p>Доступно к выводу</p>
-        </div>
-
-        <div className="userStatCard">
-          <span>Заработано</span>
-          <h2>{totalEarned} ₽</h2>
-          <p>Всего одобрено</p>
-        </div>
-
-        <div className="userStatCard">
-          <span>На проверке</span>
-          <h2>{pendingTasks.length}</h2>
-          <p>Ожидают модерации</p>
-        </div>
-
-        <div className="userStatCard">
-          <span>Заданий</span>
-          <h2>{tasks.length}</h2>
-          <p>Доступно сейчас</p>
-        </div>
-      </section>
-
-      <section className="dashboardActions">
-        <button
-          className="primaryBtn"
-          onClick={() => {
-            document
-              .querySelector("#availableTasks")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          Заработать
-        </button>
-
-        <button
-          className="secondaryBtn"
-          onClick={() => setShowWithdraw(true)}
-        >
-          Вывести
-        </button>
-
-       
-      </section>
-
-      <div className="cabinetTabs">
-  <button
-    className={activeTab === "tasks" ? "active" : ""}
-    onClick={() => setActiveTab("tasks")}
-  >
-    Задания
-  </button>
-
-  <button
-    className={activeTab === "history" ? "active" : ""}
-    onClick={() => setActiveTab("history")}
-  >
-    История
-  </button>
-
-  <button
-    className={activeTab === "done" ? "active" : ""}
-    onClick={() => setActiveTab("done")}
-  >
-    Выполненные
-  </button>
-
-  <button
-    className={activeTab === "withdraws" ? "active" : ""}
-    onClick={() => setActiveTab("withdraws")}
-  >
-    Выводы
-  </button>
-  
-</div>
-
-{activeTab === "tasks" && (
-
-      <section className="userSection" id="availableTasks">
-        <div className="sectionHead">
-          <h2>Доступные задания</h2>
-          <p>Прикрепите скриншот и отправьте на проверку.</p>
-        </div>
-
-        <div className="taskGrid">
-  {availableTasks.length === 0 ? (
-    <div className="emptyTasks">
-      <div className="emptyIcon">🎉</div>
-
-      <h2>Все задания выполнены</h2>
-
-      <p>
-        Сейчас для вас нет доступных заданий.
-        Загляните позже — скоро появятся новые.
-      </p>
-    </div>
-  ) : (
-    availableTasks.map((task) => (
-        <div
-  className={`userTaskCard taskCardV2 ${
-    openedTasks[task.id] ? "opened" : "collapsed"
-  } ${task.is_hot ? "hotTaskCard" : ""}`}
-  key={task.id}
->
-  <div className="taskCardHead">
-  <div className="taskBadges">
-    <span className="taskDifficulty">
-      {task.difficulty === "Сложное"
-        ? "🔴 Сложное"
-        : task.difficulty === "Среднее"
-        ? "🟡 Среднее"
-        : "🟢 Простое"}
-    </span>
-
-    <span className="taskTime">
-      ⏱ {task.estimated_time || "2 минуты"}
-    </span>
-  </div>
-
-  <span className="taskRewardBox">
-    +{task.reward} ₽
-  </span>
-</div>
-
-  <div className="taskTitleRow">
-    <div className={`taskIcon ${task.is_hot ? "hotTaskIcon" : ""}`}>
-  {task.is_hot ? "🔥" : getTaskIcon(task.title)}
-</div>
-
-    <div className="taskMainInfo">
-      <h3>{task.title}</h3>
-
-      <p className="taskDescriptionPreview">
-        {task.description}
-      </p>
-    </div>
-  </div>
-
-  <button
-    type="button"
-    className="taskOpenBtn"
-    onClick={() =>
-      setOpenedTasks((prev) => ({
-        ...prev,
-        [task.id]: !prev[task.id],
-      }))
-    }
-  >
-    {openedTasks[task.id]
-      ? "▲ Свернуть задание"
-      : "▼ Открыть задание"}
-  </button>
- 
-
-  {openedTasks[task.id] && (
-    <div className="taskExpandedContent">
-      {task.description && (
-        <div className="taskFullDescription">
-          <h4>Описание</h4>
-          <p>{task.description}</p>
-        </div>
-      )}
-      {task.instruction && (
-  <div className="taskInstructionBlock">
-    <h4>Подробная инструкция</h4>
-
-    <div className="taskInstruction">
-      {task.instruction}
-    </div>
-  </div>
-)}
-
-     
-
-      {task.task_link && (
-        <a
-          href={task.task_link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="taskStartBtn"
-        >
-          🚀 Выполнить задание
-        </a>
-      )}
-
-      <div className="taskUploadBlock">
-        <span>📎 Скриншот выполнения</span>
-
-        {!completedTasks.includes(task.id) && (
-          <label
-            className={`fileUploadV2 ${
-              proofFiles[task.id] ? "hasFile" : ""
-            }`}
-          >
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setProofFiles({
-                  ...proofFiles,
-                  [task.id]: e.target.files[0],
-                })
-              }
-            />
-
-            {proofFiles[task.id]
-              ? `✅ ${proofFiles[task.id].name}`
-              : "Прикрепить файл"}
-          </label>
-        )}
-      </div>
-
-      {(() => {
-        const taskStatus = taskHistory.find(
+  const availableTasks = useMemo(
+    () =>
+      tasks.filter((task) => {
+        const status = taskHistory.find(
           (item) => item.task_id === task.id
         )?.status;
 
-        return (
-          <button
-            className="primaryBtn taskSubmitBtn"
-            disabled={
-              taskStatus === "pending" ||
-              taskStatus === "approved"
-            }
-            onClick={() => completeTask(task)}
-          >
-            {taskStatus === "pending"
-              ? "🟡 На проверке"
-              : taskStatus === "approved"
-              ? "✅ Выполнено"
-              : "Отправить на проверку"}
-          </button>
-        );
-      })()}
-    </div>
-  )}
-</div>
-          ))
-)}
-        </div>
-      </section>
+        return status !== "approved" && status !== "pending";
+      }),
+    [tasks, taskHistory]
+  );
 
-      )}
+  const userName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.username ||
+    user?.email?.split("@")[0] ||
+    "Пользователь";
 
-{activeTab === "history" && (
-      <section className="userSection">
-        <div className="sectionHead">
-          <h2>История заданий</h2>
-          <p>Статусы ваших отправленных заданий.</p>
-        </div>
+  const tabs = [
+    { id: "tasks", label: "Задания", count: availableTasks.length },
+    { id: "history", label: "История", count: taskHistory.length },
+    { id: "done", label: "Выполнено", count: approvedTasks.length },
+    { id: "withdraws", label: "Выводы", count: withdrawHistory.length },
+  ];
 
-        <div className="historyTimeline">
-  {taskHistory.length === 0 ? (
-    <div className="emptyBox">
-      Вы ещё не выполняли задания
-    </div>
-  ) : (
-    taskHistory.map((item) => (
-      <div
-        className={`historyCard ${item.status}`}
-        key={item.id}
-      >
-        <div>
-          <h3>{item.task?.title}</h3>
-          <p>{getStatusText(item.status || "pending")}</p>
-        </div>
-
-        <strong>
-          {item.status === "approved"
-            ? `+${item.task?.reward || 0} ₽`
-            : "Ожидает"}
-        </strong>
+  return (
+    <div className="luxDashboard">
+      <div className="luxDashboardBackdrop" aria-hidden="true">
+        <div className="luxDashboardGlow luxDashboardGlowBlue" />
+        <div className="luxDashboardGlow luxDashboardGlowPink" />
+        <div className="luxDashboardGrid" />
       </div>
-    ))
-  )}
-</div>
-      </section>
 
-)}
+      <header className="luxTopbar">
+        <div className="luxBrandBlock">
+          <div className="luxBrandMark">B</div>
 
-{activeTab === "done" && (
-  <section className="userSection">
-    <div className="sectionHead">
-      <h2>Выполненные задания</h2>
-      <p>Задания, которые были одобрены модератором.</p>
-    </div>
-
-    <div className="historyTimeline">
-      {approvedHistory.length === 0 ? (
-        <div className="emptyBox">
-          Одобренных заданий пока нет
+          <div>
+            <span>Личный кабинет</span>
+            <strong>{userName}</strong>
+          </div>
         </div>
-      ) : (
-        approvedHistory.map((item) => (
-          <div
-            className={`historyCard ${item.status}`}
-            key={item.id}
+
+        <div className="luxTopActions">
+          <div className="luxLiveStatus">
+            <span />
+            Автообновление
+          </div>
+
+          {isAdmin && (
+            <button
+              className="luxGhostButton"
+              type="button"
+              onClick={() => {
+                localStorage.setItem("isAdminPanel", "true");
+                setIsAdminPanel(true);
+              }}
+            >
+              Админка
+            </button>
+          )}
+
+          <button
+            className="luxExitButton"
+            type="button"
+            onClick={signOutUser}
           >
-            <div>
-              <h3>{item.task?.title}</h3>
-              <p>{getStatusText(item.status || "approved")}</p>
+            Выйти
+          </button>
+        </div>
+      </header>
+
+      <main className="luxDashboardMain">
+        <section className="luxHeroPanel">
+          <div className="luxBalanceHero">
+            <div className="luxBalanceTopline">
+              <span>Доступный баланс</span>
+
+              <button
+                type="button"
+                className="luxMiniAction"
+                onClick={() => setShowWithdraw(true)}
+              >
+                Вывести
+                <span aria-hidden="true">↗</span>
+              </button>
             </div>
 
-            <strong>
-              +{item.task?.reward || 0} ₽
-            </strong>
+            <strong>{Number(balance || 0).toLocaleString("ru-RU")} ₽</strong>
+
+            <p>
+              Средства, доступные для создания заявки на вывод.
+            </p>
+
+            <div className="luxBalanceActions">
+              <button
+                type="button"
+                className="luxPrimaryAction"
+                onClick={() => {
+                  setActiveTab("tasks");
+                  setTimeout(() => {
+                    document
+                      .querySelector("#availableTasks")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }, 50);
+                }}
+              >
+                Найти задание
+                <span aria-hidden="true">→</span>
+              </button>
+
+              <button
+                type="button"
+                className="luxSecondaryAction"
+                onClick={() => setShowWithdraw(true)}
+              >
+                Создать вывод
+              </button>
+            </div>
           </div>
-        ))
-      )}
-    </div>
-  </section>
-)}
 
+          <div className="luxMetricsPanel">
+            <article>
+              <span>Заработано</span>
+              <strong>{totalEarned.toLocaleString("ru-RU")} ₽</strong>
+              <p>Сумма одобренных заданий</p>
+            </article>
 
-{activeTab === "withdraws" && (
-      <section className="userSection">
-        <div className="sectionHead">
-          <h2>История выводов</h2>
-          <p>Все ваши заявки на вывод средств.</p>
-        </div>
+            <article>
+              <span>На проверке</span>
+              <strong>{pendingTasks.length}</strong>
+              <p>Ожидают решения модератора</p>
+            </article>
 
-       <div className="withdrawTimeline">
-  {withdrawHistory.length === 0 ? (
-    <div className="emptyBox">
-      Заявок на вывод пока нет
-    </div>
-  ) : (
-    withdrawHistory.map((item) => (
-      <div
-        className={`withdrawCard ${item.status}`}
-        key={item.id}
-      >
-        <div>
-          <h3>{item.amount} ₽</h3>
-          <p>{item.wallet}</p>
-        </div>
+            <article>
+              <span>Доступно</span>
+              <strong>{availableTasks.length}</strong>
+              <p>Заданий можно выполнить сейчас</p>
+            </article>
+          </div>
+        </section>
 
-        <strong>{getStatusText(item.status)}</strong>
-      </div>
-    ))
-  )}
-</div>
-      </section>
+        <section className="luxContentShell">
+          <div className="luxTabs" role="tablist" aria-label="Разделы кабинета">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={activeTab === tab.id ? "active" : ""}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span>{tab.label}</span>
+                <b>{tab.count}</b>
+              </button>
+            ))}
+          </div>
 
-      )}
+          {activeTab === "tasks" && (
+            <section className="luxSection" id="availableTasks">
+              <div className="luxSectionHeader">
+                <div>
+                  <span>Доступные задания</span>
+                  <h2>Выберите следующее действие</h2>
+                  <p>
+                    Откройте задание, выполните его и отправьте подтверждение.
+                  </p>
+                </div>
 
+                <div className="luxSectionCount">
+                  {availableTasks.length} доступно
+                </div>
+              </div>
+
+              {availableTasks.length === 0 ? (
+                <div className="luxEmptyState">
+                  <div className="luxEmptyIcon">✓</div>
+                  <h3>Все задания выполнены</h3>
+                  <p>
+                    Сейчас нет новых заданий. Загляните позже.
+                  </p>
+                </div>
+              ) : (
+                <div className="luxTaskGrid">
+                  {availableTasks.map((task) => {
+                    const isOpened = Boolean(openedTasks[task.id]);
+                    const taskStatus = taskHistory.find(
+                      (item) => item.task_id === task.id
+                    )?.status;
+
+                    return (
+                      <article
+                        className={`luxTaskCard ${
+                          task.is_hot ? "luxTaskCardHot" : ""
+                        } ${isOpened ? "luxTaskCardOpened" : ""}`}
+                        key={task.id}
+                      >
+                        <div className="luxTaskCardTop">
+                          <div className="luxTaskIdentity">
+                            <div className="luxTaskIcon">
+                              {task.is_hot ? "🔥" : getTaskIcon(task.title)}
+                            </div>
+
+                            <div>
+                              <span>{getDifficultyLabel(task.difficulty)}</span>
+                              <h3>{task.title}</h3>
+                            </div>
+                          </div>
+
+                          <div className="luxReward">
+                            +{task.reward} ₽
+                          </div>
+                        </div>
+
+                        <p className="luxTaskDescription">
+                          {task.description}
+                        </p>
+
+                        <div className="luxTaskMeta">
+                          <span>{task.estimated_time || "2 минуты"}</span>
+                          <span>{task.is_hot ? "Приоритетное" : "Обычное"}</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="luxTaskToggle"
+                          onClick={() =>
+                            setOpenedTasks((prev) => ({
+                              ...prev,
+                              [task.id]: !prev[task.id],
+                            }))
+                          }
+                        >
+                          <span>
+                            {isOpened ? "Свернуть" : "Открыть задание"}
+                          </span>
+                          <span aria-hidden="true">
+                            {isOpened ? "↑" : "↓"}
+                          </span>
+                        </button>
+
+                        {isOpened && (
+                          <div className="luxTaskExpanded">
+                            {task.instruction && (
+                              <div className="luxTaskInfoBlock">
+                                <span>Инструкция</span>
+                                <p>{task.instruction}</p>
+                              </div>
+                            )}
+
+                            {task.task_link && (
+                              <a
+                                className="luxTaskLink"
+                                href={task.task_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Перейти к заданию
+                                <span aria-hidden="true">↗</span>
+                              </a>
+                            )}
+
+                            <div className="luxUploadBlock">
+                              <span>Подтверждение выполнения</span>
+
+                              {!completedTasks.includes(task.id) && (
+                                <label
+                                  className={`luxFileUpload ${
+                                    proofFiles[task.id] ? "hasFile" : ""
+                                  }`}
+                                >
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                      setProofFiles({
+                                        ...proofFiles,
+                                        [task.id]: e.target.files[0],
+                                      })
+                                    }
+                                  />
+
+                                  <strong>
+                                    {proofFiles[task.id]
+                                      ? proofFiles[task.id].name
+                                      : "Выбрать скриншот"}
+                                  </strong>
+
+                                  <span>
+                                    {proofFiles[task.id]
+                                      ? "Файл готов к отправке"
+                                      : "PNG, JPG или WEBP"}
+                                  </span>
+                                </label>
+                              )}
+                            </div>
+
+                            <button
+                              className="luxSubmitTask"
+                              type="button"
+                              disabled={
+                                taskStatus === "pending" ||
+                                taskStatus === "approved"
+                              }
+                              onClick={() => completeTask(task)}
+                            >
+                              {taskStatus === "pending"
+                                ? "На проверке"
+                                : taskStatus === "approved"
+                                ? "Выполнено"
+                                : "Отправить на проверку"}
+                            </button>
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          )}
+
+          {activeTab === "history" && (
+            <section className="luxSection">
+              <div className="luxSectionHeader">
+                <div>
+                  <span>История</span>
+                  <h2>Все отправленные задания</h2>
+                  <p>Следите за ходом проверки и результатами.</p>
+                </div>
+              </div>
+
+              {taskHistory.length === 0 ? (
+                <div className="luxEmptyState">
+                  <div className="luxEmptyIcon">⌁</div>
+                  <h3>История пока пустая</h3>
+                  <p>После отправки задания оно появится здесь.</p>
+                </div>
+              ) : (
+                <div className="luxTimeline">
+                  {taskHistory.map((item) => (
+                    <article
+                      className={`luxTimelineItem ${item.status}`}
+                      key={item.id}
+                    >
+                      <div className="luxTimelineDot" />
+
+                      <div className="luxTimelineMain">
+                        <span>{getStatusText(item.status || "pending")}</span>
+                        <h3>{item.task?.title || "Задание"}</h3>
+                      </div>
+
+                      <strong>
+                        {item.status === "approved"
+                          ? `+${item.task?.reward || 0} ₽`
+                          : "Ожидает"}
+                      </strong>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {activeTab === "done" && (
+            <section className="luxSection">
+              <div className="luxSectionHeader">
+                <div>
+                  <span>Выполнено</span>
+                  <h2>Одобренные задания</h2>
+                  <p>Все задания, за которые уже начислен бонус.</p>
+                </div>
+              </div>
+
+              {approvedTasks.length === 0 ? (
+                <div className="luxEmptyState">
+                  <div className="luxEmptyIcon">✓</div>
+                  <h3>Пока нет одобренных заданий</h3>
+                  <p>Выполните первое задание, чтобы оно появилось здесь.</p>
+                </div>
+              ) : (
+                <div className="luxTimeline">
+                  {approvedTasks.map((item) => (
+                    <article
+                      className="luxTimelineItem approved"
+                      key={item.id}
+                    >
+                      <div className="luxTimelineDot" />
+
+                      <div className="luxTimelineMain">
+                        <span>{getStatusText(item.status || "approved")}</span>
+                        <h3>{item.task?.title || "Задание"}</h3>
+                      </div>
+
+                      <strong>+{item.task?.reward || 0} ₽</strong>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {activeTab === "withdraws" && (
+            <section className="luxSection">
+              <div className="luxSectionHeader">
+                <div>
+                  <span>Выводы</span>
+                  <h2>Заявки на вывод средств</h2>
+                  <p>Отслеживайте сумму, реквизиты и статус заявки.</p>
+                </div>
+
+                <button
+                  type="button"
+                  className="luxMiniAction"
+                  onClick={() => setShowWithdraw(true)}
+                >
+                  Новый вывод
+                </button>
+              </div>
+
+              {withdrawHistory.length === 0 ? (
+                <div className="luxEmptyState">
+                  <div className="luxEmptyIcon">₽</div>
+                  <h3>Заявок пока нет</h3>
+                  <p>Создайте первую заявку на вывод средств.</p>
+                </div>
+              ) : (
+                <div className="luxWithdrawList">
+                  {withdrawHistory.map((item) => (
+                    <article
+                      className={`luxWithdrawItem ${item.status}`}
+                      key={item.id}
+                    >
+                      <div>
+                        <span>{getStatusText(item.status)}</span>
+                        <h3>{Number(item.amount || 0).toLocaleString("ru-RU")} ₽</h3>
+                        <p>{item.wallet}</p>
+                      </div>
+
+                      <div className="luxWithdrawBadge">
+                        {getStatusText(item.status)}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+        </section>
+      </main>
 
       {showWithdraw && (
-  <div className="modal">
-    <div className="withdrawModal">
-      <button
-        className="close"
-        onClick={() => setShowWithdraw(false)}
-      >
-        ×
-      </button>
+        <div className="luxModalOverlay">
+          <div className="luxWithdrawModal">
+            <button
+              className="luxModalClose"
+              type="button"
+              onClick={() => setShowWithdraw(false)}
+              aria-label="Закрыть"
+            >
+              ×
+            </button>
 
-      <div className="withdrawIcon">💸</div>
+            <div className="luxModalIcon">₽</div>
 
-      <h2>Вывод средств</h2>
+            <span>Вывод средств</span>
+            <h2>Создать заявку</h2>
 
-      <p className="withdrawHint">
-        Минимальная сумма вывода:{" "}
-        <strong>{siteSettings.min_withdraw || 0} ₽</strong>
-      </p>
+            <p>
+              Минимальная сумма:{" "}
+              <strong>{siteSettings.min_withdraw || 0} ₽</strong>
+            </p>
 
-      <input
-        className="authInput"
-        placeholder="Сумма вывода"
-        value={withdrawAmount}
-        onChange={(e) => setWithdrawAmount(e.target.value)}
-      />
+            <label className="luxField">
+              <span>Сумма</span>
+              <input
+                inputMode="decimal"
+                placeholder="Например, 500"
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+              />
+            </label>
 
-      <input
-        className="authInput"
-        placeholder="Telegram @username"
-        value={withdrawWallet}
-        onChange={(e) => setWithdrawWallet(e.target.value)}
-      />
+            <label className="luxField">
+              <span>Telegram</span>
+              <input
+                placeholder="@username"
+                value={withdrawWallet}
+                onChange={(e) => setWithdrawWallet(e.target.value)}
+              />
+            </label>
 
-      <button
-        className="primaryBtn authSubmit"
-        onClick={createWithdrawRequest}
-      >
-        Отправить заявку
-      </button>
-    </div>
-  </div>
-)}
-<SupportButton user={user} />
+            <button
+              className="luxSubmitWithdraw"
+              type="button"
+              onClick={createWithdrawRequest}
+            >
+              Отправить заявку
+            </button>
+          </div>
+        </div>
+      )}
+
+      <SupportButton user={user} />
     </div>
   );
 }

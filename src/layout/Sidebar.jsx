@@ -8,13 +8,14 @@ import {
   FiLogOut,
   FiMessageCircle,
   FiHeadphones,
+  FiX,
 } from "react-icons/fi";
 
 const menu = [
   {
     id: "dashboard",
     icon: <FiGrid />,
-    title: "Dashboard",
+    title: "Обзор",
     roles: ["creator", "admin"],
   },
   {
@@ -66,47 +67,118 @@ export default function Sidebar({
   activeTab,
   setActiveTab,
   onExit,
+  isOpen = false,
+  onClose,
 }) {
   const visibleMenu = menu.filter((item) =>
     item.roles.includes(role)
   );
 
+  const handleExit = () => {
+    onClose?.();
+    onExit?.();
+  };
+
   return (
-    <aside className="sidebar">
-      <div className="sidebarLogo">
-        <span>BONUS</span>
-        <strong>TEST</strong>
+    <aside
+      className={`sidebar ${
+        isOpen ? "sidebarOpen" : ""
+      }`}
+    >
+      <div className="sidebarHeader">
+        <div className="sidebarLogo">
+          <span>BONUS</span>
+          <strong>TEST</strong>
+        </div>
+
+        <button
+          type="button"
+          className="sidebarClose"
+          aria-label="Закрыть меню"
+          onClick={onClose}
+        >
+          <FiX />
+        </button>
       </div>
 
-      <div className="sidebarRole">
-        {role === "creator" ? "👑 Создатель" : "🛡 Администратор"}
+      <div className="sidebarAccount">
+        <div className="sidebarAccountAvatar">A</div>
+
+        <div className="sidebarAccountInfo">
+          <strong>Администратор</strong>
+
+          <span>
+            {role === "creator"
+              ? "Полный доступ"
+              : "Панель администратора"}
+          </span>
+        </div>
+      </div>
+
+      <div
+        className={`sidebarRole ${
+          role === "creator"
+            ? "sidebarRoleCreator"
+            : ""
+        }`}
+      >
+        <span className="sidebarRoleDot" />
+
+        {role === "creator"
+          ? "Создатель"
+          : "Администратор"}
+      </div>
+
+      <div className="sidebarSectionTitle">
+        Навигация
       </div>
 
       <nav className="sidebarMenu">
-        {visibleMenu.map((item) => (
-          <button
-            key={item.id}
-            className={`sidebarItem ${
-              activeTab === item.id ? "active" : ""
-            }`}
-            onClick={() => setActiveTab(item.id)}
-          >
-            <span className="sidebarIcon">
-              {item.icon}
-            </span>
+        {visibleMenu.map((item) => {
+          const isActive = activeTab === item.id;
 
-            <span>{item.title}</span>
-          </button>
-        ))}
+          return (
+            <button
+              type="button"
+              key={item.id}
+              className={`sidebarItem ${
+                isActive ? "active" : ""
+              }`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <span className="sidebarIcon">
+                {item.icon}
+              </span>
+
+              <span className="sidebarItemTitle">
+                {item.title}
+              </span>
+
+              {isActive && (
+                <span className="sidebarActiveDot" />
+              )}
+            </button>
+          );
+        })}
       </nav>
 
-      <button
-        className="sidebarExit"
-        onClick={onExit}
-      >
-        <FiLogOut />
-        <span>Вернуться в кабинет</span>
-      </button>
+      <div className="sidebarBottom">
+        <button
+          type="button"
+          className="sidebarExit"
+          onClick={handleExit}
+        >
+          <span className="sidebarIcon">
+            <FiLogOut />
+          </span>
+
+          <span>Вернуться в кабинет</span>
+        </button>
+
+        <div className="sidebarVersion">
+          BONUSTEST Admin · v1.0
+        </div>
+      </div>
     </aside>
   );
 }

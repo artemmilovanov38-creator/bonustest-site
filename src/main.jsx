@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 
 import "./styles/globals.css";
-import "./styles/layout.css";
+
 import "./styles/admin.css";
 import "./styles/dashboard.css";
 import "./styles/buttons.css";

@@ -1,204 +1,310 @@
-
+import "../styles/home.css";
 
 export default function Home({ siteSettings, siteStats, setShowAuth }) {
-
-
   const siteName = siteSettings.site_name || "BONUSTEST";
   const support = (siteSettings.support_telegram || "").replace("@", "");
-  
+
+  const usersValue =
+    siteSettings.display_users || `${siteStats.users || 0}+`;
+
+  const paidValue =
+    siteSettings.display_paid ||
+    `${Number(siteStats.paid || 0).toLocaleString("ru-RU")} ₽`;
+
+  const tasksValue =
+    siteSettings.display_tasks || `${siteStats.tasks || 0}+`;
+
+  const scrollToHowItWorks = () => {
+    document
+      .querySelector(".luxuryHow")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const openSupport = () => {
+    if (!support) return;
+
+    window.open(
+      `https://t.me/${support}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
 
   return (
-    <div className="site v2Home">
-      <header className="header v2Header">
-        <div className="logo">{siteName}</div>
+    <div className="luxuryHome">
+      <div className="luxuryBackdrop" aria-hidden="true">
+        <div className="luxuryAura luxuryAuraBlue" />
+        <div className="luxuryAura luxuryAuraPink" />
+        <div className="luxuryMesh" />
+        <div className="luxuryGrain" />
+      </div>
 
-        <button className="loginBtn" onClick={() => setShowAuth(true)}>
-          Войти
-        </button>
-      </header>
+      <header className="luxuryHeader">
+        <a className="luxuryBrand" href="/" aria-label={siteName}>
+          <span className="luxuryBrandMark">B</span>
+          <span>{siteName}</span>
+        </a>
 
-      <section className="hero v2Hero">
-        <div className="heroContent">
-          <div className="badge">Платформа простых заданий</div>
-
-          <h1>
-            Выполняйте задания
-            <br />
-            и получайте бонусы
-          </h1>
-
-          <p>
-            Удобный сервис для выполнения простых действий, проверки заданий
-            и безопасного вывода средств.
-          </p>
-
-          <div className="heroButtons">
-            <button className="primaryBtn" onClick={() => setShowAuth(true)}>
-              Начать бесплатно
-            </button>
-
-            <button
-              className="secondaryBtn"
-              onClick={() => {
-                document
-                  .querySelector(".howItWorks")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              Как это работает
-            </button>
-          </div>
-
-        <div className="stats v2Stats">
-  <div className="stat">
-    <div className="statIcon">👥</div>
-
-    <b>
-      {siteSettings.display_users ||
-        `${siteStats.users || 0}+`}
-    </b>
-
-    <span>Пользователей</span>
-  </div>
-
-  <div className="stat">
-    <div className="statIcon">💸</div>
-
-    <b>
-      {siteSettings.display_paid ||
-        `${Number(siteStats.paid || 0).toLocaleString("ru-RU")} ₽`}
-    </b>
-
-    <span>Выплачено</span>
-  </div>
-
-  <div className="stat">
-    <div className="statIcon">🎯</div>
-
-    <b>
-      {siteSettings.display_tasks ||
-        `${siteStats.tasks || 0}+`}
-    </b>
-
-    <span>Заданий</span>
-  </div>
-</div>
-        </div>
-
-        <div className="visual v2Visual">
-          <div className="orb">
-            <div className="coin">₽</div>
-          </div>
-
-          <div className="card cardOne">
-            <span>На проверке</span>
-            <b>🟡 Задание</b>
-          </div>
-
-          <div className="card cardTwo">
-            <span>После одобрения</span>
-            <b>+ бонус</b>
-          </div>
-        </div>
-      </section>
-
-      <section className="howItWorks">
-        <div className="sectionTitle">
-          <span>Как это работает</span>
-          <h2>4 простых шага</h2>
-        </div>
-
-        <div className="stepsRow">
-          {[
-            ["01", "Регистрация", "Напишите менеджеру для получения логина и пароля."],
-            ["02", "Выбор задания", "Выберите доступное задание."],
-            ["03", "Скриншот", "Прикрепите доказательство выполнения."],
-            ["04", "Проверка", "Админ проверит и начислит бонус."],
-          ].map((step) => (
-            <div className="stepCard" key={step[0]}>
-              <div className="stepNumber">{step[0]}</div>
-              <h3>{step[1]}</h3>
-              <p>{step[2]}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="advantagesSection">
-        <div className="sectionTitle">
-          <span>Преимущества</span>
-          <h2>Почему выбирают {siteName}</h2>
-        </div>
-
-        <div className="advantagesGrid">
-          <div className="advantageCard">
-            <div className="advantageIcon">🔒</div>
-            <h3>Проверка заданий</h3>
-            <p>Награда начисляется только после модерации.</p>
-          </div>
-
-          <div className="advantageCard">
-            <div className="advantageIcon">💸</div>
-            <h3>Вывод средств</h3>
-            <p>Создавайте заявки и отслеживайте их статус.</p>
-          </div>
-
-          <div className="advantageCard">
-            <div className="advantageIcon">📊</div>
-            <h3>История</h3>
-            <p>Все задания и выводы сохраняются в кабинете.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="supportSection">
-        <div className="supportBox">
-          <span>Поддержка</span>
-
-          <h2>Остались вопросы?</h2>
-
-          <p>
-            Напишите в поддержку, если нужна помощь с заданием, выводом
-            или аккаунтом.
-          </p>
+        <div className="luxuryHeaderNav">
+          <button type="button" onClick={scrollToHowItWorks}>
+            Как это работает
+          </button>
 
           <button
-            className="primaryBtn"
-            onClick={() => {
-              if (support) {
-                window.open(`https://t.me/${support}`, "_blank");
-              }
-            }}
+            className="luxuryLogin"
+            type="button"
+            onClick={() => setShowAuth(true)}
           >
-            Написать в поддержку
+            Войти
+            <span aria-hidden="true">↗</span>
           </button>
         </div>
-      </section>
+      </header>
 
-      <footer className="footer">
-        <div className="footerLogo">{siteName}</div>
+      <main>
+        <section className="luxuryHero">
+          <div className="luxuryHeroCopy">
+            <div className="luxuryKicker">
+              <span />
+              Платформа простых заданий
+            </div>
 
-        <div className="footerLinks">
-  <a href="/agreement">
-    Пользовательское соглашение
-  </a>
+            <h1>
+              Задания,
+              <span>которые приносят результат.</span>
+            </h1>
 
-  <a href="/privacy">
-    Политика конфиденциальности
-  </a>
+            <p className="luxuryLead">
+              Выполняйте понятные действия, отправляйте подтверждение и
+              получайте бонус после проверки — без лишней сложности.
+            </p>
 
-  <a
-    href={support ? `https://t.me/${support}` : "#"}
-    target={support ? "_blank" : undefined}
-    rel={support ? "noopener noreferrer" : undefined}
-  >
-    Поддержка
-  </a>
-</div>
+            <div className="luxuryActions">
+              <button
+                className="luxuryPrimary"
+                type="button"
+                onClick={() => setShowAuth(true)}
+              >
+                <span>Начать бесплатно</span>
+                <span aria-hidden="true">→</span>
+              </button>
 
-        <div className="footerCopy">© 2026 {siteName}</div>
+              <button
+                className="luxurySecondary"
+                type="button"
+                onClick={scrollToHowItWorks}
+              >
+                Узнать подробнее
+              </button>
+            </div>
+
+            <div className="luxuryAccessNote">
+              <span />
+              Логин и пароль выдаёт менеджер
+            </div>
+          </div>
+
+          <div className="luxuryShowcase">
+            <div className="luxuryShowcaseGlow" />
+
+            <div className="luxuryProductCard">
+              <div className="luxuryProductHead">
+                <div className="luxuryProductDots">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+
+                <span>Панель пользователя</span>
+              </div>
+
+              <div className="luxuryProductMain">
+                <div className="luxuryProductTitle">
+                  <span>Текущий статус</span>
+                  <strong>Задание на проверке</strong>
+                </div>
+
+                <div className="luxuryStatusBadge">
+                  <span />
+                  В процессе
+                </div>
+              </div>
+
+              <div className="luxuryProductProgress">
+                <span />
+              </div>
+
+              <div className="luxuryProductStats">
+                <div>
+                  <span>Пользователей</span>
+                  <strong>{usersValue}</strong>
+                </div>
+
+                <div>
+                  <span>Заданий</span>
+                  <strong>{tasksValue}</strong>
+                </div>
+
+                <div className="luxuryProductStatsWide">
+                  <span>Выплачено пользователям</span>
+                  <strong>{paidValue}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="luxuryOrbit luxuryOrbitOne" />
+            <div className="luxuryOrbit luxuryOrbitTwo" />
+            <div className="luxuryOrbit luxuryOrbitThree" />
+          </div>
+        </section>
+
+        <section className="luxuryProof">
+          <article>
+            <span>01</span>
+            <div>
+              <strong>Ручная проверка</strong>
+              <p>Каждое подтверждение проверяется перед начислением.</p>
+            </div>
+          </article>
+
+          <article>
+            <span>02</span>
+            <div>
+              <strong>Понятный статус</strong>
+              <p>Вы всегда знаете, что происходит с заданием.</p>
+            </div>
+          </article>
+
+          <article>
+            <span>03</span>
+            <div>
+              <strong>Единый кабинет</strong>
+              <p>Задания, история и вывод средств находятся рядом.</p>
+            </div>
+          </article>
+        </section>
+
+        <section className="luxuryHow luxurySection">
+          <div className="luxurySectionIntro">
+            <span>Как это работает</span>
+            <h2>Четыре шага до бонуса</h2>
+            <p>
+              Понятный сценарий без сложных форм и лишних экранов.
+            </p>
+          </div>
+
+          <div className="luxurySteps">
+            {[
+              ["01", "Получите доступ", "Напишите менеджеру и получите данные для входа."],
+              ["02", "Выберите задание", "Откройте подходящее задание в личном кабинете."],
+              ["03", "Отправьте результат", "Прикрепите подтверждение выполнения."],
+              ["04", "Получите бонус", "После проверки награда появится на балансе."],
+            ].map(([number, title, text]) => (
+              <article className="luxuryStep" key={number}>
+                <div className="luxuryStepHead">
+                  <span>{number}</span>
+                  <i aria-hidden="true">↗</i>
+                </div>
+
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="luxurySection luxuryFeatures">
+          <div className="luxurySectionIntro luxurySectionIntroLeft">
+            <span>Возможности</span>
+            <h2>Всё необходимое. Ничего лишнего.</h2>
+            <p>
+              Продуманный интерфейс, понятные действия и полный контроль над
+              каждым этапом.
+            </p>
+          </div>
+
+          <div className="luxuryFeatureGrid">
+            <article className="luxuryFeature luxuryFeatureMain">
+              <div className="luxuryFeatureNumber">01</div>
+
+              <div>
+                <h3>Контроль в реальном времени</h3>
+                <p>
+                  Статус задания, результат проверки и история всегда доступны
+                  в одном месте.
+                </p>
+              </div>
+
+              <div className="luxuryChart" aria-hidden="true">
+                <span style={{ height: "34%" }} />
+                <span style={{ height: "52%" }} />
+                <span style={{ height: "46%" }} />
+                <span style={{ height: "72%" }} />
+                <span style={{ height: "64%" }} />
+                <span style={{ height: "88%" }} />
+              </div>
+            </article>
+
+            <article className="luxuryFeature">
+              <div className="luxuryFeatureNumber">02</div>
+              <h3>Прозрачные выплаты</h3>
+              <p>
+                Создавайте заявки и отслеживайте их статус без переписок и
+                догадок.
+              </p>
+            </article>
+
+            <article className="luxuryFeature">
+              <div className="luxuryFeatureNumber">03</div>
+              <h3>Полная история</h3>
+              <p>
+                Все действия сохраняются и остаются доступными в вашем
+                кабинете.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section className="luxurySupport">
+          <div className="luxurySupportCard">
+            <div>
+              <span>Поддержка</span>
+              <h2>Мы рядом, когда это нужно</h2>
+              <p>
+                Поможем с заданием, выводом средств или доступом к аккаунту.
+              </p>
+            </div>
+
+            <button
+              className="luxuryPrimary"
+              type="button"
+              onClick={openSupport}
+              disabled={!support}
+            >
+              <span>Написать в поддержку</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer className="luxuryFooter">
+        <strong>{siteName}</strong>
+
+        <div>
+          <a href="/agreement">Пользовательское соглашение</a>
+          <a href="/privacy">Политика конфиденциальности</a>
+          <a
+            href={support ? `https://t.me/${support}` : "#"}
+            target={support ? "_blank" : undefined}
+            rel={support ? "noopener noreferrer" : undefined}
+          >
+            Поддержка
+          </a>
+        </div>
+
+        <span>© 2026 {siteName}</span>
       </footer>
-      
     </div>
   );
 }
