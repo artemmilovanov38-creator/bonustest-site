@@ -47,7 +47,8 @@ export default function Dashboard({
 }) {
   const [activeTab, setActiveTab] = useState("tasks");
   const [openedTasks, setOpenedTasks] = useState({});
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileActionsOpened, setMobileActionsOpened] = useState(false);
+  
 
   const approvedTasks = useMemo(
     () =>
@@ -105,53 +106,119 @@ export default function Dashboard({
       </div>
 
       <header className="luxTopbar">
+  <div className="luxTopbarLeft">
+    <button
+      type="button"
+      className="luxBurgerButton"
+      onClick={() =>
+        setMobileActionsOpened((previous) => !previous)
+      }
+      aria-label="Открыть меню"
+      aria-expanded={mobileActionsOpened}
+    >
+      <span />
+      <span />
+      <span />
+    </button>
+
+    <div className="luxBrandBlock">
+      <div className="luxBrandMark">B</div>
+
+      <div>
+        <span>Личный кабинет</span>
+        <strong>{userName}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div className="luxTopActions">
+    <div className="luxLiveStatus">
+      <span />
+      Автообновление
+    </div>
+
+    {isAdmin && (
+      <button
+        className="luxGhostButton"
+        type="button"
+        onClick={() => {
+          localStorage.setItem("isAdminPanel", "true");
+          setIsAdminPanel(true);
+        }}
+      >
+        Админка
+      </button>
+    )}
+
+    <button
+      className="luxExitButton"
+      type="button"
+      onClick={signOutUser}
+    >
+      Выйти
+    </button>
+  </div>
+
+  {mobileActionsOpened && (
+    <div className="luxMobileActions">
+      <button
+        type="button"
+        onClick={() => {
+          setActiveTab("tasks");
+          setMobileActionsOpened(false);
+        }}
+      >
+        Задания
+        <span>{availableTasks.length}</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          setActiveTab("history");
+          setMobileActionsOpened(false);
+        }}
+      >
+        История
+        <span>{taskHistory.length}</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          setActiveTab("withdraws");
+          setMobileActionsOpened(false);
+        }}
+      >
+        Выводы
+        <span>{withdrawHistory.length}</span>
+      </button>
+
+      {isAdmin && (
         <button
-  type="button"
-  className="luxMobileMenuButton"
-  onClick={() => setMobileMenuOpen(true)}
-  aria-label="Открыть меню"
->
-  <span />
-  <span />
-  <span />
-</button>
-        <div className="luxBrandBlock">
-          <div className="luxBrandMark">B</div>
+          type="button"
+          className="luxMobileAdminAction"
+          onClick={() => {
+            localStorage.setItem("isAdminPanel", "true");
+            setIsAdminPanel(true);
+            setMobileActionsOpened(false);
+          }}
+        >
+          Админка
+          <span>→</span>
+        </button>
+      )}
 
-          <div>
-            <span>Личный кабинет</span>
-            <strong>{userName}</strong>
-          </div>
-        </div>
-
-        <div className="luxTopActions">
-          <div className="luxLiveStatus">
-            <span />
-            Автообновление
-          </div>
-
-          {isAdmin && (
-            <button
-              className="luxGhostButton"
-              type="button"
-              onClick={() => {
-                localStorage.setItem("isAdminPanel", "true");
-                setIsAdminPanel(true);
-              }}
-            >
-              Админка
-            </button>
-          )}
-
-          <button
-            className="luxExitButton"
-            type="button"
-            onClick={signOutUser}
-          >
-            Выйти
-          </button>
-        </div>
-      </header>
+      <button
+        type="button"
+        className="luxMobileExitAction"
+        onClick={signOutUser}
+      >
+        Выйти
+      </button>
+    </div>
+  )}
+</header>
 
       <main className="luxDashboardMain">
         <section className="luxHeroPanel">
@@ -582,110 +649,7 @@ export default function Dashboard({
           </div>
         </div>
       )}
-{mobileMenuOpen && (
-  <div
-    className="luxMobileMenuOverlay"
-    onClick={() => setMobileMenuOpen(false)}
-  >
-    <aside
-      className="luxMobileMenu"
-      onClick={(event) => event.stopPropagation()}
-    >
-      <div className="luxMobileMenuHeader">
-        <div className="luxMobileMenuUser">
-          <div className="luxMobileMenuAvatar">
-            {userName.charAt(0).toUpperCase()}
-          </div>
 
-          <div>
-            <strong>{userName}</strong>
-            <span>Личный кабинет</span>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="luxMobileMenuClose"
-          onClick={() => setMobileMenuOpen(false)}
-          aria-label="Закрыть меню"
-        >
-          ×
-        </button>
-      </div>
-
-      <nav className="luxMobileNavigation">
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab("tasks");
-            setMobileMenuOpen(false);
-          }}
-        >
-          <span>Задания</span>
-          <strong>{availableTasks.length}</strong>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab("history");
-            setMobileMenuOpen(false);
-          }}
-        >
-          <span>История</span>
-          <strong>{taskHistory.length}</strong>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab("done");
-            setMobileMenuOpen(false);
-          }}
-        >
-          <span>Выполнено</span>
-          <strong>{approvedTasks.length}</strong>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab("withdraws");
-            setMobileMenuOpen(false);
-          }}
-        >
-          <span>Выводы</span>
-          <strong>{withdrawHistory.length}</strong>
-        </button>
-      </nav>
-
-      <div className="luxMobileMenuFooter">
-        {isAdmin && (
-          <button
-            type="button"
-            className="luxMobileAdminButton"
-            onClick={() => {
-              localStorage.setItem("isAdminPanel", "true");
-              setIsAdminPanel(true);
-              setMobileMenuOpen(false);
-            }}
-          >
-            Админка
-            <span>→</span>
-          </button>
-        )}
-
-        <button
-          type="button"
-          className="luxMobileLogoutButton"
-          onClick={signOutUser}
-        >
-          Выйти
-        </button>
-      </div>
-    </aside>
-  </div>
-)}
       <SupportButton user={user} />
     </div>
   );
