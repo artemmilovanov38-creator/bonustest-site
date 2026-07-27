@@ -7815,3 +7815,321 @@ max-width:100%;
     max-width: 94%;
   }
 }
+/* =========================================
+   FIX: MOBILE ADMIN MENU
+========================================= */
+
+/* На компьютере мобильная шапка скрыта */
+.adminMobileHeader {
+  display: none;
+}
+
+.sidebarClose {
+  display: none;
+}
+
+/* Затемнение при открытом меню */
+.adminSidebarOverlay {
+  display: none;
+}
+
+@media (max-width: 850px) {
+  .adminLayout {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .adminContent {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0 !important;
+    padding-top: 72px;
+  }
+
+  /* Мобильная верхняя панель */
+  .adminMobileHeader {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 900;
+
+    height: 72px;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(7, 12, 27, 0.96);
+    backdrop-filter: blur(18px);
+  }
+
+  /* Кнопка открытия админ-меню */
+  .adminMenuButton {
+    width: 44px;
+    height: 44px;
+    display: grid !important;
+    place-items: center;
+
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .adminMenuButton svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .adminMobileLogo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .adminMobileLogo span {
+    color: #60a5fa;
+  }
+
+  .adminMobileAvatar {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    font-weight: 800;
+  }
+
+  /* Боковое меню на телефоне */
+  .sidebar {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1100;
+
+    width: min(320px, 88vw);
+    height: 100vh;
+
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    visibility: visible !important;
+    display: flex !important;
+  }
+
+  .sidebar.sidebarOpen {
+    transform: translateX(0);
+  }
+
+  /* Кнопка закрытия */
+  .sidebarClose {
+    width: 40px;
+    height: 40px;
+    display: grid !important;
+    place-items: center;
+
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+
+    font-size: 21px;
+    cursor: pointer;
+  }
+
+  /* Тёмный фон за открытым меню */
+  .adminSidebarOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: block;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(3px);
+  }
+
+  /* Обычная компьютерная шапка на телефоне не нужна */
+  .adminTopBar {
+    display: none;
+  }
+
+  .adminBody {
+    width: 100%;
+    padding: 18px 14px;
+  }
+}
+/* =========================================
+   TASK CARDS FIX
+========================================= */
+
+.adminTaskCard {
+    background: #121a2b;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 22px;
+    overflow: hidden;
+    transition: .25s;
+}
+
+.adminTaskCard:hover{
+    transform: translateY(-3px);
+    border-color: rgba(59,130,246,.35);
+    box-shadow: 0 18px 45px rgba(0,0,0,.25);
+}
+
+/* Кнопка Подробнее */
+
+.adminTaskExpandBtn{
+    width:100%;
+    margin-top:18px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    padding:14px;
+
+    border:none;
+    border-radius:14px;
+
+    background:#2563eb;
+    color:#fff;
+
+    font-weight:700;
+    font-size:15px;
+
+    cursor:pointer;
+    transition:.2s;
+}
+
+.adminTaskExpandBtn:hover{
+    background:#1d4ed8;
+}
+
+/* Кнопка ссылки */
+
+.adminTaskLink{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    margin-top:18px;
+    padding:14px;
+
+    border-radius:14px;
+
+    background:#2563eb;
+    color:#fff;
+    text-decoration:none;
+    font-weight:700;
+
+    transition:.2s;
+}
+
+.adminTaskLink:hover{
+    background:#1d4ed8;
+}
+
+/* Кнопки вверх/вниз */
+
+.adminTaskOrderControls button{
+    width:42px;
+    height:42px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#1f2937;
+    color:#fff;
+
+    cursor:pointer;
+    transition:.2s;
+}
+
+.adminTaskOrderControls button:hover{
+    background:#2563eb;
+}
+
+/* Верх карточки */
+
+.adminTaskCardTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.adminTaskReward{
+    color:#22c55e;
+    font-size:22px;
+    font-weight:800;
+}
+
+/* Блок с категорией */
+
+.adminTaskCardInfo span{
+    display:inline-block;
+
+    padding:6px 12px;
+    margin-bottom:12px;
+
+    border-radius:999px;
+
+    background:rgba(37,99,235,.15);
+    color:#93c5fd;
+
+    font-size:12px;
+    font-weight:700;
+}
+
+.adminTaskCardInfo h3{
+    margin:0 0 10px;
+    color:#fff;
+}
+
+.adminTaskCardInfo p{
+    color:#94a3b8;
+    line-height:1.6;
+}
+
+/* Нижняя информация */
+
+.adminTaskQuickMeta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+
+    margin-top:18px;
+}
+
+.adminTaskQuickMeta span{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    padding:8px 12px;
+
+    border-radius:999px;
+
+    background:#1e293b;
+    color:#cbd5e1;
+
+    font-size:13px;
+}
