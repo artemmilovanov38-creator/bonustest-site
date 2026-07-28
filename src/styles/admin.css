@@ -8133,3 +8133,26 @@ max-width:100%;
 
     font-size:13px;
 }
+.adminReviewSubmittedAt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 14px;
+  margin-bottom: 18px;
+
+  padding: 10px 14px;
+
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+
+  background: rgba(255,255,255,.04);
+
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.adminReviewSubmittedAt svg{
+  color:#60a5fa;
+  flex-shrink:0;
+}

@@ -436,6 +436,23 @@ export default function AdminReviews({ admin }) {
                     </strong>
                   </div>
 
+                  <div className="adminReviewSubmittedAt">
+  <FiClock />
+
+  <span>
+    Отправлено:{" "}
+    {item.created_at
+      ? new Date(item.created_at).toLocaleString("ru-RU", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "Неизвестно"}
+  </span>
+</div>
+
                   {item.proof_url ? (
                     <button
                       type="button"
